@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230044FF%22/%3E%3Cpath d=%22M16 5l3.4 7 7.6 1-5.5 5.3 1.3 7.6L16 22.3 9.2 26l1.3-7.6L5 13l7.6-1z%22 fill=%22white%22/%3E%3C/svg%3E" />
   <title>Auditorio Hno. Ludolfo Ojeda y Ojeda | LaSalle Arequipa</title>
 
   <!-- Tailwind CSS -->
@@ -16,6 +17,12 @@
   <!-- Three.js & OrbitControls (CDN) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- SpaceTwin: configuración, datos y UI compartida -->
+  <script src="js/config.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/booking.js" defer></script>
 
   <script>
     tailwind.config = {
@@ -82,8 +89,7 @@
         <button 
           id="userMenuBtn"
           type="button"
-          onclick="window.location.href='user.html'"
-          aria-label="Perfil de usuario"
+          aria-label="Menú de usuario"
           class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
         >
           <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
@@ -114,30 +120,30 @@
             <p class="text-xs text-slate-500">elias@ulasalle.edu.pe</p>
           </div>
           <div class="py-1">
-            <button type="button" onclick="showToast('Perfil de Elías • LaSalle Arequipa')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+            <a href="user.html" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
               <svg class="w-4 h-4 text-lasalle-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               Mi Perfil
-            </button>
-            <button type="button" onclick="showToast('Consultando historial de reservas de Elías')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+            </a>
+            <a href="myreservas.html" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
               <svg class="w-4 h-4 text-lasalle-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
               Mis Reservas
-            </button>
-            <button type="button" onclick="showToast('Sesión cerrada correctamente')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+            </a>
+            <a href="login.html?logout=1" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
               <svg class="w-4 h-4 text-lasalle-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
               Cerrar Sesión
-            </button>
+            </a>
           </div>
         </div>
       </div>
 
       <!-- Parte Derecha: Identidad Oficial LaSalle Universidad Arequipa -->
-      <a href="#" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+      <a href="index.html" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
         <div class="text-right flex flex-col justify-center">
           <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
             LaSalle
@@ -169,10 +175,10 @@
   <!-- =========================================================
        2. LAYOUT PRINCIPAL EN DOS COLUMNAS (62% VISOR 3D / 38% PANEL)
        ========================================================= -->
-  <main class="flex-grow max-w-[1600px] w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col lg:flex-row gap-5">
+  <main class="flex-grow max-w-[1600px] w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col lg:flex-row lg:items-start gap-5">
     
     <!-- COLUMNA IZQUIERDA (62% ancho en desktop): VISOR 3D INTERACTIVO -->
-    <section aria-label="Simulación 3D Auditorio Hno. Ludolfo Ojeda y Ojeda" class="w-full lg:w-[62%] flex flex-col bg-white rounded-2xl shadow-md border border-blue-100 overflow-hidden relative min-h-[480px] lg:h-[calc(100vh-7.5rem)]">
+    <section aria-label="Simulación 3D Auditorio Hno. Ludolfo Ojeda y Ojeda" class="w-full lg:w-[62%] flex flex-col bg-white rounded-2xl shadow-md border border-blue-100 overflow-hidden relative min-h-[480px] lg:sticky lg:top-[6.5rem] lg:h-[calc(100vh-7.5rem)]">
       
       <!-- Barra flotante superior dentro del visor 3D -->
       <div class="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
@@ -230,7 +236,7 @@
     </section>
 
     <!-- COLUMNA DERECHA (38% ancho en desktop): PANEL DE CONTROL Y RESERVA -->
-    <aside aria-label="Panel de reserva del auditorio" class="w-full lg:w-[38%] bg-white rounded-2xl shadow-md border border-blue-100 flex flex-col lg:h-[calc(100vh-7.5rem)] overflow-hidden">
+    <aside aria-label="Panel de reserva del auditorio" class="w-full lg:w-[38%] bg-white rounded-2xl shadow-md border border-blue-100 flex flex-col lg:sticky lg:top-[6.5rem] lg:h-[calc(100vh-7.5rem)] overflow-hidden">
       
       <!-- Cabecera fija del panel -->
       <div class="p-5 sm:p-6 border-b border-blue-100 bg-gradient-to-r from-lasalle-ice/70 to-white">
@@ -256,40 +262,8 @@
       <!-- Contenido desplazable del panel -->
       <div class="p-5 sm:p-6 space-y-5 overflow-y-auto custom-scroll flex-grow">
 
-        <!-- SECCIÓN 1 Y 2: FECHAS DISPONIBLES DEL MES + SELECTOR DE MES DEL SEMESTRE -->
-        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-3.5">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <label class="text-xs font-bold uppercase tracking-wider text-lasalle-blueDark">
-                Fechas disponibles del mes actual
-              </label>
-              <span id="selectedDateBadge" class="text-[11px] font-semibold text-lasalle-vibrant bg-lasalle-ice px-2 py-0.5 rounded-md">
-                Selecciona fecha
-              </span>
-            </div>
-            <!-- Pequeños boxes clicables de fechas -->
-            <div id="availableDatesContainer" class="grid grid-cols-5 gap-2">
-              <!-- Generado dinámicamente por JS -->
-            </div>
-          </div>
-
-          <div class="pt-2 border-t border-slate-200">
-            <label for="semesterMonthSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-              Mes del semestre actual
-            </label>
-            <select 
-              id="semesterMonthSelect" 
-              onchange="updateMonthDates()"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-blue-200 bg-white text-sm font-semibold text-lasalle-blueDark focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
-            >
-              <option value="Agosto">Agosto 2026 (Inicio Semestre II)</option>
-              <option value="Septiembre">Septiembre 2026</option>
-              <option value="Octubre">Octubre 2026</option>
-              <option value="Noviembre" selected>Noviembre 2026 (Mes Actual)</option>
-              <option value="Diciembre">Diciembre 2026 (Cierre Semestre II)</option>
-            </select>
-          </div>
-        </div>
+        <!-- SECCIÓN 1 Y 2: FECHA + FRANJA HORARIA + REQUERIMIENTOS (SpaceTwin · js/booking.js) -->
+        <div id="bookingWidget" data-espacio="ojeda"></div>
 
         <!-- SECCIÓN 3: EVENTOS ESPECIALES (VACACIONES - FUERA DE SEMESTRE) -->
         <div class="bg-lasalle-ice/50 rounded-xl p-4 border border-lasalle-sky space-y-3">
@@ -443,7 +417,7 @@
 
         <button 
           type="button" 
-          onclick="window.location.href='reserva.html'"
+          onclick="STBooking.confirmar()"
           class="w-full py-3.5 px-6 rounded-xl bg-lasalle-gradient hover:opacity-95 text-white font-display font-bold text-sm tracking-wide shadow-lg shadow-blue-600/30 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <span>Reservar</span>
@@ -497,51 +471,6 @@
     });
 
     /* ---------------------------------------------------------
-       B. FECHAS DISPONIBLES POR MES DEL SEMESTRE
-       --------------------------------------------------------- */
-    const semesterDatesMap = {
-      'Agosto': ['06 Ago', '13 Ago', '19 Ago', '25 Ago', '28 Ago'],
-      'Septiembre': ['03 Sep', '10 Sep', '16 Sep', '22 Sep', '29 Sep'],
-      'Octubre': ['02 Oct', '09 Oct', '15 Oct', '21 Oct', '28 Oct'],
-      'Noviembre': ['05 Nov', '12 Nov', '18 Nov', '24 Nov', '29 Nov'],
-      'Diciembre': ['03 Dic', '09 Dic', '14 Dic', '18 Dic', '22 Dic']
-    };
-
-    let selectedDateStr = '05 Nov';
-
-    function updateMonthDates() {
-      const month = document.getElementById('semesterMonthSelect').value;
-      const dates = semesterDatesMap[month] || semesterDatesMap['Noviembre'];
-      const container = document.getElementById('availableDatesContainer');
-      container.innerHTML = '';
-
-      dates.forEach((dateLabel, idx) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        const isSelected = idx === 0;
-        if (isSelected) selectedDateStr = dateLabel;
-
-        btn.className = isSelected
-          ? 'date-box py-2 px-1 rounded-lg text-xs font-bold bg-lasalle-vibrant text-white shadow-sm border border-lasalle-vibrant transition-all text-center'
-          : 'date-box py-2 px-1 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-lasalle-ice hover:text-lasalle-blue border border-slate-200 transition-all text-center';
-        btn.textContent = dateLabel;
-
-        btn.onclick = () => {
-          selectedDateStr = dateLabel;
-          document.getElementById('selectedDateBadge').textContent = `Elegida: ${dateLabel}`;
-          document.querySelectorAll('.date-box').forEach(b => {
-            b.className = 'date-box py-2 px-1 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-lasalle-ice hover:text-lasalle-blue border border-slate-200 transition-all text-center';
-          });
-          btn.className = 'date-box py-2 px-1 rounded-lg text-xs font-bold bg-lasalle-vibrant text-white shadow-sm border border-lasalle-vibrant transition-all text-center';
-        };
-
-        container.appendChild(btn);
-      });
-
-      document.getElementById('selectedDateBadge').textContent = `Elegida: ${selectedDateStr}`;
-    }
-
-    /* ---------------------------------------------------------
        C. SOLICITUD DE FECHA ESPECIAL (VACACIONES)
        --------------------------------------------------------- */
     function submitSpecialRequest() {
@@ -558,7 +487,10 @@
         return;
       }
 
-      showToast(`Solicitud enviada por Elías para el ${dateVal} ("${reasonVal}").`);
+      // SpaceTwin: se registra como solicitud especial pendiente para el administrador
+      const res = Store.solicitudEspecial('ojeda', dateVal, reasonVal);
+      if (!res.ok) { showToast(res.errores[0]); return; }
+      showToast(`Solicitud especial enviada para el ${dateVal} ("${reasonVal}"). La revisará la Oficina de Infraestructura.`);
       document.getElementById('specialReasonInput').value = '';
     }
 
@@ -624,14 +556,22 @@
       }
     }
 
-    function confirmAuditoriumBooking() {
-      const month = document.getElementById('semesterMonthSelect').value;
-      const seatsMsg = selectedSeatNumbers.size > 0
-        ? `Butacas seleccionadas: #${Array.from(selectedSeatNumbers).sort((a,b)=>a-b).join(', #')}`
-        : `Recinto completo (70 butacas • ${vipCount} VIP / ${platinumCount} Plat. / ${70 - vipCount - platinumCount} Gral.)`;
-
-      showToast(`¡Reserva confirmada para Elías! Auditorio Hno. Ludolfo Ojeda (${selectedDateStr} - ${month}). ${seatsMsg}`);
-    }
+    // SpaceTwin: la configuración del visor 3D se guarda junto a la reserva
+    window.obtenerConfiguracion = () => ({
+      vip: vipCount,
+      platinum: platinumCount,
+      general: totalSeats - vipCount - platinumCount,
+      butacasSeleccionadas: Array.from(selectedSeatNumbers).sort((a, b) => a - b),
+    });
+    // SpaceTwin: restaura la distribución guardada (p. ej. tras iniciar sesión)
+    window.aplicarConfiguracion = (c) => {
+      vipCount = c.vip || 0;
+      platinumCount = c.platinum || 0;
+      selectedSeatNumbers.clear();
+      (c.butacasSeleccionadas || []).forEach((n) => selectedSeatNumbers.add(n));
+      updateZonesUIAnd3D();
+      updateCapacityDisplay();
+    };
 
     /* ---------------------------------------------------------
        E. SIMULACIÓN 3D EN THREE.JS - AUDITORIO HNO. LUDOLFO OJEDA
@@ -1067,7 +1007,6 @@
 
     // Inicialización al cargar
     window.addEventListener('DOMContentLoaded', () => {
-      updateMonthDates();
       init3DAuditorium();
     });
   </script>

@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Confirmación de Reserva | LaSalle Universidad Arequipa</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230044FF%22/%3E%3Cpath d=%22M16 5l3.4 7 7.6 1-5.5 5.3 1.3 7.6L16 22.3 9.2 26l1.3-7.6L5 13l7.6-1z%22 fill=%22white%22/%3E%3C/svg%3E" />
+  <title>Detalle de Reserva | SpaceTwin · LaSalle Arequipa</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,6 +13,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Código QR de acceso (qrcodejs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- SpaceTwin: configuración, datos y UI compartida -->
+  <script src="js/config.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
 
   <script>
     tailwind.config = {
@@ -40,171 +49,207 @@
     .bg-lasalle-gradient {
       background: linear-gradient(135deg, #0044FF 0%, #0026B8 100%);
     }
+    #qrBox img, #qrBox canvas { width: 100% !important; height: auto !important; image-rendering: pixelated; }
+    @media print {
+      header, footer, #st-asistente-btn, .no-print { display: none !important; }
+      body { background: #fff !important; }
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-lasalle-vibrant selection:text-white">
+<body data-st-menu class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-lasalle-vibrant selection:text-white">
 
   <!-- =========================================================
-       1. BARRA SUPERIOR INSTITUCIONAL (IDÉNTICA A LAS ANTERIORES)
+       1. BARRA SUPERIOR INSTITUCIONAL
        ========================================================= -->
   <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 sticky top-0 z-40 border-b border-white/20">
     <nav aria-label="Navegación principal" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      
-      <!-- Parte Izquierda: Usuario Elías -->
       <div class="relative" id="userMenuContainer">
-        <button 
-          id="userMenuBtn"
-          type="button"
-          aria-label="Perfil de usuario"
-          class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
-        >
+        <button id="userMenuBtn" type="button" aria-label="Menú de usuario" aria-expanded="false"
+          class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
           <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
           </div>
           <div class="hidden sm:flex flex-col text-left">
             <span class="text-xs text-blue-100 font-medium leading-none">Portal Académico</span>
             <span class="text-sm font-semibold text-white leading-tight mt-0.5 flex items-center gap-1">
               Elías
-              <svg class="w-3.5 h-3.5 text-white transition-transform duration-200" id="userChevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
+              <svg class="w-3.5 h-3.5 text-white transition-transform duration-200" id="userChevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
             </span>
           </div>
         </button>
-
-        <!-- Dropdown de Perfil -->
-        <div 
-          id="userDropdown" 
-          class="hidden absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-xl shadow-blue-950/15 border border-blue-100 py-2 text-slate-700 z-50"
-        >
-          <div class="px-4 py-3 border-b border-blue-50">
-            <p class="text-xs font-bold uppercase tracking-wider text-lasalle-vibrant">Comunidad Lasallista</p>
-            <p class="text-sm font-semibold text-slate-900 mt-0.5">Elías</p>
-            <p class="text-xs text-slate-500">elias@ulasalle.edu.pe</p>
-          </div>
-          <div class="py-1">
-            <a href="./myreservas.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice text-slate-700 hover:text-lasalle-blue transition-colors">
-              Mis Reservas
-            </a>
-            <a href="./index.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice text-slate-700 hover:text-lasalle-blue transition-colors">
-              Inicio
-            </a>
-          </div>
+        <div id="userDropdown" class="hidden absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-xl shadow-blue-950/15 border border-blue-100 py-2 text-slate-700 z-50">
+          <a href="user.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice">Mi perfil</a>
+          <a href="myreservas.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice">Mis reservas</a>
+          <a href="login.html?logout=1" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice text-red-600">Cerrar sesión</a>
         </div>
       </div>
 
-      <!-- Parte Derecha: Logotipo Oficial LaSalle Universidad Arequipa -->
-      <a href="./index.html" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+      <a href="index.html" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
         <div class="text-right flex flex-col justify-center">
-          <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
-            LaSalle
-          </span>
-          <span class="font-sans text-[11px] sm:text-xs font-medium tracking-wide text-blue-100 leading-tight mt-0.5">
-            Universidad <span class="text-white font-semibold">&bull; Arequipa</span>
-          </span>
+          <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">LaSalle</span>
+          <span class="font-sans text-[11px] sm:text-xs font-medium tracking-wide text-blue-100 leading-tight mt-0.5">Universidad <span class="text-white font-semibold">&bull; Arequipa</span></span>
         </div>
-
         <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/30 flex items-center justify-center p-1.5 shadow-sm group-hover:bg-white/25 transition-all">
           <svg viewBox="0 0 120 115" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrella LaSalle Arequipa">
-            <polygon points="58,6 45,42 54,42 58,28" fill="#FFFFFF" />
-            <polygon points="62,14 69,34 61,34 58,24" fill="#FFFFFF" />
-            <polygon points="8,43 44,43 38,54 24,54" fill="#FFFFFF" />
-            <polygon points="27,57 41,57 35,66" fill="#FFFFFF" />
-            <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" fill="#FFFFFF" />
-            <polygon points="31,101 64,87 62,93 28,108" fill="#FFFFFF" />
-            <polygon points="64,37 112,37 104,47 62,47" fill="#FFFFFF" />
-            <polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" fill="#FFFFFF" />
+            <polygon points="58,6 45,42 54,42 58,28" fill="#FFFFFF" /><polygon points="62,14 69,34 61,34 58,24" fill="#FFFFFF" />
+            <polygon points="8,43 44,43 38,54 24,54" fill="#FFFFFF" /><polygon points="27,57 41,57 35,66" fill="#FFFFFF" />
+            <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" fill="#FFFFFF" /><polygon points="31,101 64,87 62,93 28,108" fill="#FFFFFF" />
+            <polygon points="64,37 112,37 104,47 62,47" fill="#FFFFFF" /><polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" fill="#FFFFFF" />
             <polygon points="99,51 108,51 96,65 92,61" fill="#FFFFFF" />
           </svg>
         </div>
       </a>
-
     </nav>
   </header>
 
   <!-- =========================================================
-       2. CONTENIDO CENTRAL: MENSAJE GRANDE + DOS BOXES DE ACCIÓN
+       2. CONTENIDO: se genera desde el store según ?id=
        ========================================================= -->
-  <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center py-12">
-
-    <!-- Check institucional minimalista -->
-    <div class="w-20 h-20 rounded-full bg-lasalle-gradient text-white flex items-center justify-center shadow-xl shadow-blue-600/25 mb-7">
-      <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-
-    <!-- Título Grande Centrado -->
-    <h1 class="font-display text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-lasalle-blueDark tracking-tight leading-tight">
-      Gracias por su reserva
-    </h1>
-
-    <!-- Línea decorativa azul -->
-    <div class="mt-6 mb-12 flex items-center justify-center gap-2">
-      <span class="h-1 w-14 rounded-full bg-lasalle-blueDark"></span>
-      <span class="h-1.5 w-5 rounded-full bg-lasalle-vibrant"></span>
-      <span class="h-1 w-14 rounded-full bg-lasalle-blueDark"></span>
-    </div>
-
-    <!-- Dos Boxes de Navegación -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
-      
-      <!-- Box 1: Ir a mis reservas -->
-      <a 
-        href="./myreservas.html" 
-        class="group rounded-3xl bg-lasalle-gradient text-white p-8 shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 hover:-translate-y-1 transition-all duration-200 flex flex-col items-center justify-center border border-white/20"
-      >
-        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-        </div>
-        <span class="font-display text-lg sm:text-xl font-extrabold tracking-tight">
-          Ir a mis reservas
-        </span>
-      </a>
-
-      <!-- Box 2: Ir al inicio -->
-      <a 
-        href="./index.html" 
-        class="group rounded-3xl bg-white text-lasalle-blueDark p-8 shadow-md hover:shadow-xl hover:bg-lasalle-ice/60 hover:-translate-y-1 transition-all duration-200 flex flex-col items-center justify-center border-2 border-blue-200"
-      >
-        <div class="w-12 h-12 rounded-2xl bg-lasalle-ice text-lasalle-vibrant flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-        </div>
-        <span class="font-display text-lg sm:text-xl font-extrabold tracking-tight">
-          Ir al inicio
-        </span>
-      </a>
-
-    </div>
-
-  </main>
+  <main id="contenido" class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12"></main>
 
   <script>
-    const userMenuBtn = document.getElementById('userMenuBtn');
-    const userDropdown = document.getElementById('userDropdown');
-    const userChevron = document.getElementById('userChevron');
+    (function () {
+      if (window.ST_BLOQUEADO) return; // sin permiso: app.js muestra la pantalla de acceso
+      const S = Store, U = Store.util, esc = ST.esc;
+      const q = new URLSearchParams(location.search);
+      const main = document.getElementById('contenido');
+      const r = q.get('id') ? S.reserva(q.get('id')) : null;
+      const yo = S.usuario();
 
-    userMenuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isHidden = userDropdown.classList.contains('hidden');
-      userDropdown.classList.toggle('hidden');
-      userChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-    });
+      if (!r) {
+        main.innerHTML = `
+          <div class="text-center max-w-xl mx-auto py-10">
+            <div class="w-20 h-20 mx-auto rounded-full bg-lasalle-ice text-lasalle-vibrant flex items-center justify-center text-3xl mb-6" aria-hidden="true">?</div>
+            <h1 class="font-display text-3xl font-extrabold text-lasalle-blueDark">No encontramos esa reserva</h1>
+            <p class="text-slate-500 mt-3">Es posible que el enlace esté incompleto o que la demo se haya reiniciado.</p>
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+              <a href="myreservas.html" class="px-6 py-3 rounded-xl bg-lasalle-gradient text-white font-display font-bold text-sm shadow-md">Ir a mis reservas</a>
+              <a href="index.html" class="px-6 py-3 rounded-xl bg-white border-2 border-blue-200 text-lasalle-blueDark font-display font-bold text-sm">Ir al inicio</a>
+            </div>
+          </div>`;
+        return;
+      }
 
-    document.addEventListener('click', () => {
-      userDropdown.classList.add('hidden');
-      userChevron.style.transform = 'rotate(0deg)';
-    });
+      const e = S.espacio(r.espacioId);
+      const pr = S.prioridad(r);
+      const nueva = q.get('nueva') === '1';
+      const checkin = q.get('checkin');
+
+      const ENC = {
+        pendiente: { icono: '⏳', titulo: nueva ? '¡Solicitud enviada!' : 'Solicitud en revisión', sub: 'La Oficina de Infraestructura revisará tu solicitud. Te avisaremos por notificación y correo institucional.', color: 'bg-amber-500', chip: 'bg-amber-50 text-amber-700 border-amber-200' },
+        aprobada:  { icono: '✓', titulo: 'Reserva aprobada', sub: 'Presenta tu código QR en la puerta del espacio para hacer check-in.', color: 'bg-lasalle-gradient', chip: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+        rechazada: { icono: '✕', titulo: 'Solicitud rechazada', sub: r.motivoRechazo || 'Tu solicitud no pudo ser atendida.', color: 'bg-red-500', chip: 'bg-red-50 text-red-700 border-red-200' },
+        cancelada: { icono: '↩', titulo: 'Reserva cancelada', sub: r.cancelacionTardia ? 'Quedó registrada como cancelación tardía.' : 'El horario fue liberado para otros solicitantes.', color: 'bg-slate-500', chip: 'bg-slate-100 text-slate-600 border-slate-200' },
+      }[r.estado];
+
+      const pasos = [
+        { t: 'Solicitud registrada', ok: true, f: r.creadaEn },
+        { t: 'En revisión por Infraestructura', ok: true, activo: r.estado === 'pendiente' },
+        { t: r.estado === 'rechazada' ? 'Rechazada' : r.estado === 'cancelada' ? 'Cancelada' : 'Aprobada', ok: r.estado !== 'pendiente', f: r.resueltaEn || r.canceladaEn, error: r.estado === 'rechazada' || r.estado === 'cancelada' },
+        { t: 'Check-in con QR', ok: false, deshab: r.estado !== 'aprobada' },
+      ];
+
+      const fila = (k, v) => `<div class="py-3 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 border-b border-slate-100 last:border-0"><dt class="sm:w-44 flex-shrink-0 text-[11px] font-bold uppercase tracking-wider text-slate-400">${k}</dt><dd class="text-sm text-slate-800 font-medium">${v}</dd></div>`;
+
+      main.innerHTML = `
+        ${checkin ? `<div role="status" class="mb-6 rounded-2xl p-4 border ${r.estado === 'aprobada' && checkin === r.codigoQR ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'bg-red-50 border-red-300 text-red-800'} font-bold text-sm flex items-center gap-3">
+          <span class="text-2xl" aria-hidden="true">${r.estado === 'aprobada' && checkin === r.codigoQR ? '✅' : '⛔'}</span>
+          ${r.estado === 'aprobada' && checkin === r.codigoQR ? `Check-in válido · ${esc(r.evento)} · ${U.fechaCorta(r.fecha)} ${r.horaInicio}–${r.horaFin}` : 'Código QR no válido para esta reserva o la reserva no está aprobada.'}
+        </div>` : ''}
+
+        <div class="text-center mb-10">
+          <div class="w-20 h-20 mx-auto rounded-full ${ENC.color} text-white flex items-center justify-center shadow-xl shadow-blue-600/25 mb-6 text-4xl font-bold" aria-hidden="true">${ENC.icono}</div>
+          <h1 class="font-display text-3xl sm:text-4xl lg:text-[2.8rem] font-extrabold text-lasalle-blueDark tracking-tight leading-tight">${ENC.titulo}</h1>
+          <p class="text-slate-600 mt-3 max-w-2xl mx-auto">${esc(ENC.sub)}</p>
+          <div class="mt-5 flex items-center justify-center gap-2" aria-hidden="true">
+            <span class="h-1 w-14 rounded-full bg-lasalle-blueDark"></span><span class="h-1.5 w-5 rounded-full bg-lasalle-vibrant"></span><span class="h-1 w-14 rounded-full bg-lasalle-blueDark"></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+          <!-- Detalle -->
+          <article class="bg-white rounded-3xl shadow-md border border-blue-100 overflow-hidden">
+            <div class="relative h-40 sm:h-48">
+              <img src="${e.imagen}" alt="${esc(e.nombre)}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x400/0038E0/FFFFFF?text=${encodeURIComponent(e.corto)}'">
+              <div class="absolute inset-0 bg-gradient-to-t from-lasalle-blueDeep/90 via-lasalle-blueDark/30 to-transparent"></div>
+              <div class="absolute bottom-4 left-5 right-5 text-white">
+                <span class="text-[11px] uppercase tracking-widest text-blue-200 font-bold">Reserva ${esc(r.id)}</span>
+                <h2 class="font-display text-xl sm:text-2xl font-extrabold">${esc(e.nombre)}</h2>
+              </div>
+              <span class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-extrabold border ${ENC.chip}">${S.textoEstado(r.estado)}${S.porVencer(r) ? ' · por vencer' : ''}</span>
+            </div>
+            <dl class="px-6 sm:px-8 py-3">
+              ${fila('Evento', `<strong class="font-display text-base text-lasalle-blueDark">${esc(r.evento)}</strong>`)}
+              ${fila('Fecha', esc(U.fechaLarga(r.fecha)).replace(/^./, (c) => c.toUpperCase()))}
+              ${fila('Horario', `${r.horaInicio} – ${r.horaFin} hrs <span class="text-slate-400">(${U.horaANum(r.horaFin) - U.horaANum(r.horaInicio)} h)</span>`)}
+              ${fila('Solicitante', `${esc(r.solicitante)} <span class="text-slate-400">· ${esc(r.correo)}</span>`)}
+              ${fila('Prioridad', `<span class="px-2 py-0.5 rounded-md text-xs font-bold ${pr.nivel === 1 ? 'bg-purple-50 text-purple-700' : pr.nivel === 2 ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'}">${esc(pr.etiqueta)}</span>`)}
+              ${fila('Tipo de actividad', esc(r.tipoActividad))}
+              ${fila('Aforo estimado', `${r.aforo} de ${e.capacidad} personas <span class="text-slate-400">(${Math.round(r.aforo / e.capacidad * 100)}%)</span>`)}
+              ${fila('Equipamiento', (r.equipamiento || []).length ? r.equipamiento.map((x) => `<span class="inline-block mr-1 mb-1 px-2 py-0.5 rounded-md bg-lasalle-ice text-lasalle-blueDark text-xs font-semibold">${esc(x)}</span>`).join('') : '<span class="text-slate-400">Ninguno</span>')}
+              ${fila('Configuración 3D', esc(S.resumenConfig(r)))}
+              ${r.motivo ? fila('Observaciones', esc(r.motivo)) : ''}
+              ${r.motivoRechazo ? fila('Motivo de rechazo', `<span class="text-red-700">${esc(r.motivoRechazo)}</span>`) : ''}
+            </dl>
+          </article>
+
+          <!-- QR + seguimiento -->
+          <aside class="space-y-6">
+            <div class="bg-white rounded-3xl shadow-md border border-blue-100 p-6 text-center">
+              <h2 class="font-display font-extrabold text-lasalle-blueDark">Código QR de acceso</h2>
+              <div class="relative mx-auto mt-4 w-48">
+                <div id="qrBox" class="w-48 h-48 mx-auto p-2 bg-white rounded-xl border border-slate-200 ${r.estado === 'aprobada' ? '' : 'blur-[6px] opacity-40'}" role="img" aria-label="${r.estado === 'aprobada' ? 'Código QR de acceso para la reserva ' + esc(r.id) : 'Código QR no disponible todavía'}"></div>
+                ${r.estado !== 'aprobada' ? `<div class="absolute inset-0 flex items-center justify-center"><span class="px-3 py-1.5 rounded-lg bg-white/95 shadow text-xs font-bold text-slate-700 border border-slate-200">${r.estado === 'pendiente' ? 'Disponible al aprobarse' : 'No disponible'}</span></div>` : ''}
+              </div>
+              <p class="font-mono text-xs text-slate-500 mt-3 break-all">${r.estado === 'aprobada' ? esc(r.codigoQR) : '•••• •••• ••••'}</p>
+              ${r.estado === 'aprobada' ? '<button type="button" onclick="window.print()" class="no-print mt-4 w-full py-2.5 rounded-xl bg-lasalle-ice hover:bg-lasalle-sky text-lasalle-vibrant font-bold text-xs">Imprimir / guardar PDF</button>' : ''}
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md border border-blue-100 p-6">
+              <h2 class="font-display font-extrabold text-lasalle-blueDark mb-4">Seguimiento</h2>
+              <ol class="space-y-4">
+                ${pasos.map((p) => `
+                  <li class="flex gap-3">
+                    <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold ${p.error ? 'bg-red-500 text-white' : p.activo ? 'bg-amber-400 text-white animate-pulse' : p.ok ? 'bg-lasalle-vibrant text-white' : 'bg-slate-200 text-slate-400'}" aria-hidden="true">${p.error ? '✕' : p.ok && !p.activo ? '✓' : '•'}</span>
+                    <div>
+                      <p class="text-sm font-semibold ${p.deshab ? 'text-slate-400' : 'text-slate-800'}">${p.t}</p>
+                      ${p.f ? `<p class="text-[11px] text-slate-400">${new Date(p.f).toLocaleString('es-PE', { dateStyle: 'medium', timeStyle: 'short' })}</p>` : ''}
+                    </div>
+                  </li>`).join('')}
+              </ol>
+              <p class="mt-5 text-[11px] text-slate-500 bg-slate-50 rounded-xl p-3 border border-slate-100">📧 Se enviaría una copia de cada cambio de estado al correo institucional <strong>${esc(r.correo)}</strong>.</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="no-print grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+          <a href="myreservas.html" class="rounded-2xl bg-lasalle-gradient text-white p-5 shadow-lg shadow-blue-600/20 hover:-translate-y-0.5 transition-all text-center font-display font-extrabold">Ir a mis reservas</a>
+          <a href="index.html" class="rounded-2xl bg-white text-lasalle-blueDark p-5 shadow-md border-2 border-blue-200 hover:bg-lasalle-ice/60 hover:-translate-y-0.5 transition-all text-center font-display font-extrabold">Ir al inicio</a>
+          ${yo && yo.correo === r.correo && ['pendiente', 'aprobada'].includes(r.estado)
+            ? '<button type="button" id="btnCancelar" class="rounded-2xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 p-5 font-display font-extrabold transition-all">Cancelar reserva</button>'
+            : yo && yo.rol === 'admin' ? '<a href="admin.html" class="rounded-2xl bg-white text-lasalle-blueDark p-5 shadow-md border-2 border-blue-200 text-center font-display font-extrabold">Panel de administración</a>' : '<span></span>'}
+        </div>`;
+
+      if (r.estado === 'aprobada' && window.QRCode) {
+        // El QR apunta a esta misma página con el código: el personal lo escanea para validar el check-in
+        const url = new URL('reserva.html?id=' + encodeURIComponent(r.id) + '&checkin=' + encodeURIComponent(r.codigoQR), location.href).href;
+        new QRCode(document.getElementById('qrBox'), { text: url, width: 176, height: 176, colorDark: '#00187A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+      } else {
+        // Patrón decorativo (difuminado) mientras no esté aprobada
+        const box = document.getElementById('qrBox');
+        box.innerHTML = '<div class="grid grid-cols-12 gap-0.5 w-full h-full">' + Array.from({ length: 144 }, () => `<span class="${Math.random() > .5 ? 'bg-slate-800' : 'bg-white'}"></span>`).join('') + '</div>';
+      }
+
+      const bc = document.getElementById('btnCancelar');
+      if (bc) bc.onclick = () => {
+        const tardia = U.horasHasta(U.inicioDe(r.fecha, r.horaInicio)) < ST_CONFIG.CANCELACION_MIN_HORAS;
+        if (!confirm(tardia ? `Faltan menos de ${ST_CONFIG.CANCELACION_MIN_HORAS} h para el evento: se registrará como CANCELACIÓN TARDÍA. ¿Continuar?` : '¿Seguro que deseas cancelar esta reserva? El horario quedará libre.')) return;
+        S.cancelar(r.id);
+        location.reload();
+      };
+    })();
   </script>
 </body>
 </html>

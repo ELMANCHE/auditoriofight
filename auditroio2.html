@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230044FF%22/%3E%3Cpath d=%22M16 5l3.4 7 7.6 1-5.5 5.3 1.3 7.6L16 22.3 9.2 26l1.3-7.6L5 13l7.6-1z%22 fill=%22white%22/%3E%3C/svg%3E" />
   <title>Auditorio Hno. Benito Campos del Río | LaSalle Arequipa</title>
 
   <!-- Tailwind CSS -->
@@ -16,6 +17,12 @@
   <!-- Three.js & OrbitControls (WebGL 3D) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- SpaceTwin: configuración, datos y UI compartida -->
+  <script src="js/config.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/booking.js" defer></script>
 
   <script>
     tailwind.config = {
@@ -65,21 +72,20 @@
     }
   </style>
 </head>
-<body class="bg-[#eef2f7] text-slate-800 font-sans min-h-screen lg:h-screen lg:overflow-hidden flex flex-col selection:bg-lasalle-vibrant selection:text-white">
+<body class="bg-[#eef2f7] text-slate-800 font-sans min-h-screen flex flex-col selection:bg-lasalle-vibrant selection:text-white">
 
   <!-- =========================================================
        1. BARRA SUPERIOR INSTITUCIONAL (IDÉNTICA EN AMBOS AUDITORIOS)
        ========================================================= -->
-  <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 z-40 border-b border-white/20 flex-shrink-0">
-    <nav aria-label="Navegación principal" class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+  <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 sticky top-0 z-40 border-b border-white/20">
+    <nav aria-label="Navegación principal" class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       
       <!-- Parte Izquierda: Usuario Elías -->
       <div class="relative" id="userMenuContainer">
         <button 
           id="userMenuBtn"
           type="button"
-          onclick="window.location.href='user.html'"
-          aria-label="Perfil de usuario"
+          aria-label="Menú de usuario"
           class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
         >
           <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
@@ -110,18 +116,18 @@
             <p class="text-xs text-slate-500">elias@ulasalle.edu.pe</p>
           </div>
           <div class="py-1">
-            <button type="button" onclick="showToast('Perfil de Elías • LaSalle Arequipa')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+            <a href="user.html" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
               Mi Perfil
-            </button>
-            <button type="button" onclick="showToast('Mostrando tus reservas en Sala Polivalente')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+            </a>
+            <a href="myreservas.html" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
               Mis Reservas
-            </button>
+            </a>
           </div>
         </div>
       </div>
 
       <!-- Parte Derecha: Logotipo Oficial LaSalle Universidad Arequipa -->
-      <a href="#" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+      <a href="index.html" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
         <div class="text-right flex flex-col justify-center">
           <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
             LaSalle
@@ -152,16 +158,18 @@
   <!-- =========================================================
        2. CONTENEDOR PRINCIPAL DIVIDIDO (MISMA CONCORDANCIA VISUAL)
        ========================================================= -->
-  <main class="flex-grow max-w-[1600px] w-full mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-4 sm:gap-5 overflow-hidden">
+  <main class="flex-grow max-w-[1600px] w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col lg:flex-row lg:items-start gap-5">
 
     <!-- =======================================================
          LADO IZQUIERDO: VISOR 3D INTERACTIVO (SALA POLIVALENTE)
          ======================================================= -->
-    <section class="relative w-full lg:w-[63%] h-[480px] lg:h-full bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden flex-shrink-0">
+    <section class="relative w-full lg:w-[62%] h-[480px] lg:sticky lg:top-[6.5rem] lg:h-[calc(100vh-7.5rem)] bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden flex-shrink-0">
       <canvas id="canvas3d"></canvas>
 
       <!-- Tarjeta flotante superior izquierda (idéntica al primer auditorio) -->
-      <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 shadow-md border border-slate-200/80 max-w-xs pointer-events-auto">
+      <!-- Barra superior del visor (misma estructura que auditorio.html: se apila en móvil) -->
+      <div class="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-start justify-between gap-2 pointer-events-none">
+      <div class="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 shadow-md border border-slate-200/80 max-w-xs pointer-events-auto">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-lasalle-vibrant"></span>
           <span class="text-[11px] font-extrabold uppercase tracking-wider text-lasalle-blueDark">MODELO 3D INTERACTIVO • SALA POLIVALENTE</span>
@@ -172,16 +180,17 @@
       </div>
 
       <!-- Botones de cámara en pastilla blanca superior derecha (idénticos al anterior) -->
-      <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-md border border-slate-200/80 flex items-center gap-1">
+      <div class="bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-md border border-slate-200/80 flex items-center gap-1 pointer-events-auto">
         <button type="button" id="btnViewTop" onclick="setCameraView('top')" class="cam-btn px-3 py-1.5 rounded-xl bg-lasalle-vibrant text-white font-bold text-xs transition-all">
           Vista Superior
         </button>
         <button type="button" id="btnViewStage" onclick="setCameraView('stage')" class="cam-btn px-3 py-1.5 rounded-xl text-slate-700 hover:bg-slate-100 font-bold text-xs transition-all">
-          Vista Frontal
+          Vista Escenario
         </button>
         <button type="button" id="btnViewSide" onclick="setCameraView('side')" class="cam-btn px-3 py-1.5 rounded-xl text-slate-700 hover:bg-slate-100 font-bold text-xs transition-all">
           Vista Lateral
         </button>
+      </div>
       </div>
 
       <!-- Leyenda inferior idéntica al primer auditorio -->
@@ -214,7 +223,7 @@
     <!-- =======================================================
          LADO DERECHO: PANEL DE RESERVA (ESTILO IDÉNTICO AL ANTERIOR)
          ======================================================= -->
-    <aside class="w-full lg:w-[37%] lg:h-full bg-white rounded-3xl shadow-sm border border-slate-200/90 flex flex-col overflow-hidden">
+    <aside class="w-full lg:w-[38%] lg:sticky lg:top-[6.5rem] lg:h-[calc(100vh-7.5rem)] bg-white rounded-3xl shadow-sm border border-slate-200/90 flex flex-col overflow-hidden">
       
       <!-- CABECERA DEL AUDITORIO (IDÉNTICA AL PRIMER AUDITORIO) -->
       <div class="px-6 pt-5 pb-4 border-b border-slate-100 flex-shrink-0">
@@ -238,38 +247,8 @@
       <!-- CONTENIDO SCROLLEABLE CON LOS MISMOS MENÚS -->
       <div class="flex-grow overflow-y-auto custom-scroll px-6 py-4 space-y-4">
 
-        <!-- 1. FECHAS ACTUALES DISPONIBLES EN BOXES DEL MES -->
-        <div class="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-4">
-          <div class="flex items-center justify-between mb-2.5">
-            <span class="text-xs font-extrabold text-slate-800">
-              Fechas disponibles — <span id="currentMonthLabel" class="text-lasalle-vibrant">Noviembre 2026</span>
-            </span>
-            <span class="text-[11px] font-semibold text-slate-500">Semestre actual</span>
-          </div>
-
-          <div id="availableDatesGrid" class="grid grid-cols-4 gap-2"></div>
-          <p id="selectedDateFeedback" class="text-[11px] text-slate-500 mt-2">
-            Selecciona una fecha disponible del mes.
-          </p>
-        </div>
-
-        <!-- 2. CALENDARIO PARA ESCOGER EL MES DEL SEMESTRE ACTUAL -->
-        <div class="rounded-2xl border border-slate-200/90 bg-white p-4">
-          <label for="semesterMonthSelect" class="block text-xs font-extrabold text-slate-800 mb-2">
-            Calendario • Escoger mes del semestre actual
-          </label>
-          <select 
-            id="semesterMonthSelect" 
-            onchange="updateMonthDates(this.value)"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
-          >
-            <option value="2026-08">Agosto 2026 (Semestre II)</option>
-            <option value="2026-09">Septiembre 2026 (Semestre II)</option>
-            <option value="2026-10">Octubre 2026 (Semestre II)</option>
-            <option value="2026-11" selected>Noviembre 2026 (Mes Actual)</option>
-            <option value="2026-12">Diciembre 2026 (Semestre II)</option>
-          </select>
-        </div>
+        <!-- 1 y 2. FECHA + FRANJA HORARIA + REQUERIMIENTOS (SpaceTwin · js/booking.js) -->
+        <div id="bookingWidget" data-espacio="benito"></div>
 
         <!-- 3. EVENTOS ESPECIALES (VACACIONES / FUERA DE SEMESTRE) -->
         <div class="rounded-2xl border border-slate-200/90 bg-white p-4 space-y-2.5">
@@ -395,7 +374,7 @@
         </div>
         <button 
           type="button" 
-          onclick="window.location.href='reserva.html'"
+          onclick="STBooking.confirmar()"
           class="w-full py-3.5 px-5 rounded-2xl bg-lasalle-gradient hover:opacity-95 text-white font-display font-extrabold text-sm tracking-wide shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2"
         >
           <span>Reservar</span>
@@ -436,44 +415,6 @@
       userChevron.style.transform = 'rotate(0deg)';
     });
 
-    // 2. Fechas del Semestre Actual
-    const semesterAvailability = {
-      '2026-08': { label: 'Agosto 2026', dates: ['06 Ago', '11 Ago', '14 Ago', '19 Ago', '22 Ago', '26 Ago', '29 Ago', '31 Ago'] },
-      '2026-09': { label: 'Septiembre 2026', dates: ['03 Sep', '08 Sep', '12 Sep', '16 Sep', '21 Sep', '25 Sep', '29 Sep', '30 Sep'] },
-      '2026-10': { label: 'Octubre 2026', dates: ['02 Oct', '07 Oct', '13 Oct', '16 Oct', '21 Oct', '24 Oct', '28 Oct', '30 Oct'] },
-      '2026-11': { label: 'Noviembre 2026', dates: ['04 Nov', '09 Nov', '13 Nov', '18 Nov', '21 Nov', '25 Nov', '28 Nov', '30 Nov'] },
-      '2026-12': { label: 'Diciembre 2026', dates: ['02 Dic', '05 Dic', '10 Dic', '14 Dic', '17 Dic', '19 Dic', '21 Dic', '22 Dic'] }
-    };
-
-    let selectedDateBox = null;
-
-    function updateMonthDates(monthKey) {
-      const data = semesterAvailability[monthKey];
-      document.getElementById('currentMonthLabel').textContent = data.label;
-      const grid = document.getElementById('availableDatesGrid');
-      grid.innerHTML = '';
-      selectedDateBox = null;
-      document.getElementById('selectedDateFeedback').textContent = 'Selecciona una fecha disponible del mes.';
-
-      data.dates.forEach((dateStr) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'date-box px-2 py-2 rounded-xl border border-slate-200 bg-white hover:bg-lasalle-ice text-xs font-bold text-slate-700 transition-all text-center';
-        btn.textContent = dateStr;
-        btn.onclick = () => {
-          document.querySelectorAll('.date-box').forEach(b => {
-            b.classList.remove('bg-lasalle-vibrant', 'text-white', 'border-lasalle-vibrant');
-            b.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
-          });
-          btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
-          btn.classList.add('bg-lasalle-vibrant', 'text-white', 'border-lasalle-vibrant');
-          selectedDateBox = `${dateStr} (${data.label})`;
-          document.getElementById('selectedDateFeedback').innerHTML = `Fecha elegida: <strong class="text-lasalle-vibrant">${selectedDateBox}</strong>`;
-        };
-        grid.appendChild(btn);
-      });
-    }
-
     function requestVacationAvailability() {
       const dateVal = document.getElementById('vacationDate').value;
       const reasonVal = document.getElementById('vacationReason').value.trim();
@@ -481,8 +422,11 @@
         showToast('Ingresa la fecha y un motivo breve para requerir disponibilidad.');
         return;
       }
+      // SpaceTwin: se registra como solicitud especial pendiente para el administrador
+      const res = Store.solicitudEspecial('benito', dateVal, reasonVal);
+      if (!res.ok) { showToast(res.errores[0]); return; }
       document.getElementById('vacationReason').value = '';
-      showToast(`Disponibilidad requerida por Elías para el ${dateVal} ("${reasonVal}").`);
+      showToast(`Solicitud especial enviada para el ${dateVal} ("${reasonVal}"). La revisará la Oficina de Infraestructura.`);
     }
 
     function toggleZonesAccordion() {
@@ -895,17 +839,23 @@
       controls.update();
     }
 
-    function confirmAuditoriumBooking() {
-      const selectedSeats = seatObjects.filter(s => s.selected).map(s => `#${s.number}`);
-      const dateInfo = selectedDateBox || 'Noviembre 2026';
-      const detail = selectedSeats.length > 0
-        ? `Sillas seleccionadas: ${selectedSeats.join(', ')}`
-        : (vipCount > 0 || platinumCount > 0)
-          ? `Zonas: ${vipCount} VIP, ${platinumCount} Platinum, ${100 - vipCount - platinumCount} General`
-          : 'Aforo completo (100 personas)';
-
-      showToast(`¡Reserva confirmada por Elías! Auditorio Hno. Benito Campos del Río • ${dateInfo} • ${detail}`);
-    }
+    // SpaceTwin: la configuración del visor 3D se guarda junto a la reserva
+    window.obtenerConfiguracion = () => ({
+      vip: vipCount,
+      platinum: platinumCount,
+      general: 100 - vipCount - platinumCount,
+      modoTaller: isWorkshopMode,
+      sillasSeleccionadas: seatObjects.filter(s => s.selected).map(s => s.number),
+    });
+    // SpaceTwin: restaura la distribución guardada (p. ej. tras iniciar sesión)
+    window.aplicarConfiguracion = (c) => {
+      vipCount = c.vip || 0;
+      platinumCount = c.platinum || 0;
+      if (!!c.modoTaller !== isWorkshopMode) toggleWorkshopLayout();
+      const sel = new Set(c.sillasSeleccionadas || []);
+      seatObjects.forEach((s) => { s.selected = sel.has(s.number); });
+      recalculateZones();
+    };
 
     let toastTimer;
     function showToast(msg) {
@@ -931,7 +881,6 @@
       renderer.render(scene, camera);
     }
 
-    updateMonthDates('2026-11');
     recalculateZones();
     animate();
   </script>
