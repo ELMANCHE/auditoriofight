@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Reservas | LaSalle Universidad Arequipa</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lasalle: {
+              blue: '#0038E0',
+              vibrant: '#0044FF',
+              blueDark: '#0022A8',
+              blueDeep: '#00187A',
+              ice: '#EBF2FF',
+              sky: '#D6E4FF',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .bg-lasalle-gradient {
+      background: linear-gradient(135deg, #0044FF 0%, #0026B8 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-lasalle-vibrant selection:text-white">
+
+  <!-- =========================================================
+       1. BARRA SUPERIOR INSTITUCIONAL (CON "CERRAR SESIÓN" A LA IZQUIERDA)
+       ========================================================= -->
+  <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 sticky top-0 z-40 border-b border-white/20">
+    <nav aria-label="Navegación principal" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Parte Izquierda: Botón Cerrar sesión -->
+      <a 
+        href="index.html" 
+        class="group flex items-center gap-3 p-2 pr-4 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
+      >
+        <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </div>
+        <span class="text-sm font-bold text-white tracking-wide">
+          Cerrar sesión
+        </span>
+      </a>
+
+      <!-- Parte Derecha: Logotipo Oficial LaSalle Universidad Arequipa -->
+      <a href="index.html" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+        <div class="text-right flex flex-col justify-center">
+          <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
+            LaSalle
+          </span>
+          <span class="font-sans text-[11px] sm:text-xs font-medium tracking-wide text-blue-100 leading-tight mt-0.5">
+            Universidad <span class="text-white font-semibold">&bull; Arequipa</span>
+          </span>
+        </div>
+
+        <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/30 flex items-center justify-center p-1.5 shadow-sm group-hover:bg-white/25 transition-all">
+          <svg viewBox="0 0 120 115" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrella LaSalle Arequipa">
+            <polygon points="58,6 45,42 54,42 58,28" fill="#FFFFFF" />
+            <polygon points="62,14 69,34 61,34 58,24" fill="#FFFFFF" />
+            <polygon points="8,43 44,43 38,54 24,54" fill="#FFFFFF" />
+            <polygon points="27,57 41,57 35,66" fill="#FFFFFF" />
+            <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" fill="#FFFFFF" />
+            <polygon points="31,101 64,87 62,93 28,108" fill="#FFFFFF" />
+            <polygon points="64,37 112,37 104,47 62,47" fill="#FFFFFF" />
+            <polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" fill="#FFFFFF" />
+            <polygon points="99,51 108,51 96,65 92,61" fill="#FFFFFF" />
+          </svg>
+        </div>
+      </a>
+
+    </nav>
+  </header>
+
+  <!-- =========================================================
+       2. CONTENIDO PRINCIPAL: MIS RESERVAS
+       ========================================================= -->
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+    <!-- Título Principal Centrado -->
+    <div class="text-center mb-10 sm:mb-12">
+      <h1 class="font-display text-3xl sm:text-4xl font-extrabold text-lasalle-blueDark tracking-tight">
+        Mis reservas
+      </h1>
+      <div class="mt-4 flex items-center justify-center gap-2">
+        <span class="h-1 w-12 rounded-full bg-lasalle-blueDark"></span>
+        <span class="h-1.5 w-4 rounded-full bg-lasalle-vibrant"></span>
+        <span class="h-1 w-12 rounded-full bg-lasalle-blueDark"></span>
+      </div>
+    </div>
+
+    <!-- Listado de Reservas Activas -->
+    <div id="reservationsContainer" class="space-y-6">
+
+      <!-- RESERVA 1: AUDITORIO HNO. LUDOLFO OJEDA Y OJEDA -->
+      <article id="booking-1" class="bg-white rounded-3xl shadow-md shadow-blue-950/5 border border-blue-100 overflow-hidden flex flex-col md:flex-row transition-all duration-300">
+        
+        <!-- Box de la Foto del Auditorio -->
+        <div class="md:w-80 h-56 md:h-auto relative flex-shrink-0 overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=900&q=80" 
+            onerror="this.onerror=null;this.src='https://placehold.co/800x600/0038E0/FFFFFF?text=Auditorio+Hno.+Ludolfo+Ojeda';"
+            alt="Auditorio Hermano Ludolfo Ojeda y Ojeda" 
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-lasalle-blueDeep/70 via-transparent to-transparent"></div>
+          <span class="absolute top-4 left-4 bg-white/95 text-lasalle-blue text-xs font-extrabold px-3 py-1 rounded-full shadow-sm">
+            Confirmada
+          </span>
+        </div>
+
+        <!-- Información de Fecha, Hora y Botón Cancelar Reserva -->
+        <div class="flex-grow p-6 sm:p-8 flex flex-col justify-between gap-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-lasalle-vibrant">
+              Recinto Principal • Aforo: 70 personas
+            </span>
+            <h2 class="font-display text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+              Auditorio Hermano Ludolfo Ojeda y Ojeda
+            </h2>
+            <p class="text-sm text-slate-500 mt-1">
+              Solicitante: <strong class="text-slate-700">Elías</strong>
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-6">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Fecha de reserva</span>
+                <span class="font-display text-sm sm:text-base font-extrabold text-lasalle-blueDark">
+                  28 de Noviembre, 2026
+                </span>
+              </div>
+              <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Hora de reserva</span>
+                <span class="font-display text-sm sm:text-base font-extrabold text-lasalle-blueDark">
+                  10:00 - 12:30 hrs
+                </span>
+              </div>
+            </div>
+
+            <button 
+              type="button" 
+              onclick="cancelReservation('booking-1', 'Auditorio Hermano Ludolfo Ojeda y Ojeda')"
+              class="px-5 py-3 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 hover:border-red-600 font-display font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 flex-shrink-0"
+            >
+              Cancelar reserva
+            </button>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- RESERVA 2: ÁREA VERDE DE LA UNIVERSIDAD -->
+      <article id="booking-2" class="bg-white rounded-3xl shadow-md shadow-blue-950/5 border border-blue-100 overflow-hidden flex flex-col md:flex-row transition-all duration-300">
+        
+        <!-- Box de la Foto de la Cancha / Área Verde -->
+        <div class="md:w-80 h-56 md:h-auto relative flex-shrink-0 overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=900&q=80" 
+            onerror="this.onerror=null;this.src='https://placehold.co/800x600/0038E0/FFFFFF?text=Area+Verde+Universidad';"
+            alt="Área Verde de la Universidad" 
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-lasalle-blueDeep/70 via-transparent to-transparent"></div>
+          <span class="absolute top-4 left-4 bg-white/95 text-lasalle-blue text-xs font-extrabold px-3 py-1 rounded-full shadow-sm">
+            Confirmada
+          </span>
+        </div>
+
+        <!-- Información de Fecha, Hora y Botón Cancelar Reserva -->
+        <div class="flex-grow p-6 sm:p-8 flex flex-col justify-between gap-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-lasalle-vibrant">
+              Espacio Abierto • Expo Emprendimiento (16 stands)
+            </span>
+            <h2 class="font-display text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+              Área Verde de la Universidad
+            </h2>
+            <p class="text-sm text-slate-500 mt-1">
+              Solicitante: <strong class="text-slate-700">Elías</strong>
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-6">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Fecha de reserva</span>
+                <span class="font-display text-sm sm:text-base font-extrabold text-lasalle-blueDark">
+                  05 de Diciembre, 2026
+                </span>
+              </div>
+              <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Hora de reserva</span>
+                <span class="font-display text-sm sm:text-base font-extrabold text-lasalle-blueDark">
+                  15:00 - 18:00 hrs
+                </span>
+              </div>
+            </div>
+
+            <button 
+              type="button" 
+              onclick="cancelReservation('booking-2', 'Área Verde de la Universidad')"
+              class="px-5 py-3 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 hover:border-red-600 font-display font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 flex-shrink-0"
+            >
+              Cancelar reserva
+            </button>
+          </div>
+        </div>
+
+      </article>
+
+    </div>
+
+    <!-- Estado vacío si se cancelan todas las reservas -->
+    <div id="emptyState" class="hidden text-center bg-white rounded-3xl border border-blue-100 p-12 shadow-sm">
+      <p class="font-display text-lg font-extrabold text-slate-800">No tienes reservas activas en este momento</p>
+      <a href="index.html" class="inline-block mt-5 px-6 py-3 rounded-xl bg-lasalle-gradient text-white font-display font-bold text-sm shadow-md">
+        Realizar una nueva reserva
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Notificación Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-lasalle-gradient text-white px-5 py-3.5 rounded-xl shadow-xl border border-white/25 flex items-center gap-3 text-sm font-medium">
+      <span class="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
+      <span id="toastMessage">Reserva cancelada</span>
+    </div>
+  </div>
+
+  <script>
+    let remainingBookings = 2;
+
+
+    function cancelReservation(cardId, placeName) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.98)';
+
+      setTimeout(() => {
+        card.remove();
+        remainingBookings--;
+        if (remainingBookings <= 0) {
+          document.getElementById('emptyState').classList.remove('hidden');
+        }
+        showToast(`Reserva cancelada: ${placeName}`);
+      }, 250);
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

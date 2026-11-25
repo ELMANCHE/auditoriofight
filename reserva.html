@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirmación de Reserva | LaSalle Universidad Arequipa</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lasalle: {
+              blue: '#0038E0',
+              vibrant: '#0044FF',
+              blueDark: '#0022A8',
+              blueDeep: '#00187A',
+              ice: '#EBF2FF',
+              sky: '#D6E4FF',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .bg-lasalle-gradient {
+      background: linear-gradient(135deg, #0044FF 0%, #0026B8 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-lasalle-vibrant selection:text-white">
+
+  <!-- =========================================================
+       1. BARRA SUPERIOR INSTITUCIONAL (IDÉNTICA A LAS ANTERIORES)
+       ========================================================= -->
+  <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 sticky top-0 z-40 border-b border-white/20">
+    <nav aria-label="Navegación principal" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Parte Izquierda: Usuario Elías -->
+      <div class="relative" id="userMenuContainer">
+        <button 
+          id="userMenuBtn"
+          type="button"
+          aria-label="Perfil de usuario"
+          class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="hidden sm:flex flex-col text-left">
+            <span class="text-xs text-blue-100 font-medium leading-none">Portal Académico</span>
+            <span class="text-sm font-semibold text-white leading-tight mt-0.5 flex items-center gap-1">
+              Elías
+              <svg class="w-3.5 h-3.5 text-white transition-transform duration-200" id="userChevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
+        </button>
+
+        <!-- Dropdown de Perfil -->
+        <div 
+          id="userDropdown" 
+          class="hidden absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-xl shadow-blue-950/15 border border-blue-100 py-2 text-slate-700 z-50"
+        >
+          <div class="px-4 py-3 border-b border-blue-50">
+            <p class="text-xs font-bold uppercase tracking-wider text-lasalle-vibrant">Comunidad Lasallista</p>
+            <p class="text-sm font-semibold text-slate-900 mt-0.5">Elías</p>
+            <p class="text-xs text-slate-500">elias@ulasalle.edu.pe</p>
+          </div>
+          <div class="py-1">
+            <a href="./myreservas.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice text-slate-700 hover:text-lasalle-blue transition-colors">
+              Mis Reservas
+            </a>
+            <a href="./index.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice text-slate-700 hover:text-lasalle-blue transition-colors">
+              Inicio
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parte Derecha: Logotipo Oficial LaSalle Universidad Arequipa -->
+      <a href="./index.html" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+        <div class="text-right flex flex-col justify-center">
+          <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
+            LaSalle
+          </span>
+          <span class="font-sans text-[11px] sm:text-xs font-medium tracking-wide text-blue-100 leading-tight mt-0.5">
+            Universidad <span class="text-white font-semibold">&bull; Arequipa</span>
+          </span>
+        </div>
+
+        <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/30 flex items-center justify-center p-1.5 shadow-sm group-hover:bg-white/25 transition-all">
+          <svg viewBox="0 0 120 115" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrella LaSalle Arequipa">
+            <polygon points="58,6 45,42 54,42 58,28" fill="#FFFFFF" />
+            <polygon points="62,14 69,34 61,34 58,24" fill="#FFFFFF" />
+            <polygon points="8,43 44,43 38,54 24,54" fill="#FFFFFF" />
+            <polygon points="27,57 41,57 35,66" fill="#FFFFFF" />
+            <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" fill="#FFFFFF" />
+            <polygon points="31,101 64,87 62,93 28,108" fill="#FFFFFF" />
+            <polygon points="64,37 112,37 104,47 62,47" fill="#FFFFFF" />
+            <polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" fill="#FFFFFF" />
+            <polygon points="99,51 108,51 96,65 92,61" fill="#FFFFFF" />
+          </svg>
+        </div>
+      </a>
+
+    </nav>
+  </header>
+
+  <!-- =========================================================
+       2. CONTENIDO CENTRAL: MENSAJE GRANDE + DOS BOXES DE ACCIÓN
+       ========================================================= -->
+  <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center py-12">
+
+    <!-- Check institucional minimalista -->
+    <div class="w-20 h-20 rounded-full bg-lasalle-gradient text-white flex items-center justify-center shadow-xl shadow-blue-600/25 mb-7">
+      <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+
+    <!-- Título Grande Centrado -->
+    <h1 class="font-display text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-lasalle-blueDark tracking-tight leading-tight">
+      Gracias por su reserva
+    </h1>
+
+    <!-- Línea decorativa azul -->
+    <div class="mt-6 mb-12 flex items-center justify-center gap-2">
+      <span class="h-1 w-14 rounded-full bg-lasalle-blueDark"></span>
+      <span class="h-1.5 w-5 rounded-full bg-lasalle-vibrant"></span>
+      <span class="h-1 w-14 rounded-full bg-lasalle-blueDark"></span>
+    </div>
+
+    <!-- Dos Boxes de Navegación -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
+      
+      <!-- Box 1: Ir a mis reservas -->
+      <a 
+        href="./myreservas.html" 
+        class="group rounded-3xl bg-lasalle-gradient text-white p-8 shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 hover:-translate-y-1 transition-all duration-200 flex flex-col items-center justify-center border border-white/20"
+      >
+        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <span class="font-display text-lg sm:text-xl font-extrabold tracking-tight">
+          Ir a mis reservas
+        </span>
+      </a>
+
+      <!-- Box 2: Ir al inicio -->
+      <a 
+        href="./index.html" 
+        class="group rounded-3xl bg-white text-lasalle-blueDark p-8 shadow-md hover:shadow-xl hover:bg-lasalle-ice/60 hover:-translate-y-1 transition-all duration-200 flex flex-col items-center justify-center border-2 border-blue-200"
+      >
+        <div class="w-12 h-12 rounded-2xl bg-lasalle-ice text-lasalle-vibrant flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+        </div>
+        <span class="font-display text-lg sm:text-xl font-extrabold tracking-tight">
+          Ir al inicio
+        </span>
+      </a>
+
+    </div>
+
+  </main>
+
+  <script>
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdown = document.getElementById('userDropdown');
+    const userChevron = document.getElementById('userChevron');
+
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = userDropdown.classList.contains('hidden');
+      userDropdown.classList.toggle('hidden');
+      userChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    });
+
+    document.addEventListener('click', () => {
+      userDropdown.classList.add('hidden');
+      userChevron.style.transform = 'rotate(0deg)';
+    });
+  </script>
+</body>
+</html>

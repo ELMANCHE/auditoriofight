@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Área Verde de la Universidad | LaSalle Arequipa</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Three.js & OrbitControls (WebGL 3D) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lasalle: {
+              blue: '#0038E0',
+              vibrant: '#0044FF',
+              blueDark: '#0022A8',
+              blueDeep: '#00187A',
+              ice: '#EBF2FF',
+              sky: '#D6E4FF',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .bg-lasalle-gradient {
+      background: linear-gradient(135deg, #0044FF 0%, #0026B8 100%);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    #canvas3d {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+  </style>
+</head>
+<body class="bg-[#eef2f7] text-slate-800 font-sans min-h-screen lg:h-screen lg:overflow-hidden flex flex-col selection:bg-lasalle-vibrant selection:text-white">
+
+  <!-- =========================================================
+       1. BARRA SUPERIOR INSTITUCIONAL
+       ========================================================= -->
+  <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 z-40 border-b border-white/20 flex-shrink-0">
+    <nav aria-label="Navegación principal" class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Parte Izquierda: Usuario Elías -->
+      <div class="relative" id="userMenuContainer">
+        <button 
+          id="userMenuBtn"
+          type="button"
+          onclick="window.location.href='user.html'"
+          aria-label="Perfil de usuario"
+          class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="hidden sm:flex flex-col text-left">
+            <span class="text-xs text-blue-100 font-medium leading-none">Portal Académico</span>
+            <span class="text-sm font-semibold text-white leading-tight mt-0.5 flex items-center gap-1">
+              Elías
+              <svg class="w-3.5 h-3.5 text-white transition-transform duration-200" id="userChevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
+        </button>
+
+        <!-- Dropdown de Perfil -->
+        <div 
+          id="userDropdown" 
+          class="hidden absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-xl shadow-blue-950/15 border border-blue-100 py-2 text-slate-700 z-50"
+        >
+          <div class="px-4 py-3 border-b border-blue-50">
+            <p class="text-xs font-bold uppercase tracking-wider text-lasalle-vibrant">Comunidad Lasallista</p>
+            <p class="text-sm font-semibold text-slate-900 mt-0.5">Elías</p>
+            <p class="text-xs text-slate-500">elias@ulasalle.edu.pe</p>
+          </div>
+          <div class="py-1">
+            <button type="button" onclick="showToast('Perfil de Elías - LaSalle Arequipa')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+              Mi Perfil
+            </button>
+            <button type="button" onclick="showToast('Mostrando tus reservas en Área Verde')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+              Mis Reservas
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parte Derecha: Logotipo Oficial LaSalle Universidad Arequipa -->
+      <a href="#" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+        <div class="text-right flex flex-col justify-center">
+          <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
+            LaSalle
+          </span>
+          <span class="font-sans text-[11px] sm:text-xs font-medium tracking-wide text-blue-100 leading-tight mt-0.5">
+            Universidad <span class="text-white font-semibold">&bull; Arequipa</span>
+          </span>
+        </div>
+
+        <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/30 flex items-center justify-center p-1.5 shadow-sm group-hover:bg-white/25 transition-all">
+          <svg viewBox="0 0 120 115" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrella LaSalle Arequipa">
+            <polygon points="58,6 45,42 54,42 58,28" fill="#FFFFFF" />
+            <polygon points="62,14 69,34 61,34 58,24" fill="#FFFFFF" />
+            <polygon points="8,43 44,43 38,54 24,54" fill="#FFFFFF" />
+            <polygon points="27,57 41,57 35,66" fill="#FFFFFF" />
+            <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" fill="#FFFFFF" />
+            <polygon points="31,101 64,87 62,93 28,108" fill="#FFFFFF" />
+            <polygon points="64,37 112,37 104,47 62,47" fill="#FFFFFF" />
+            <polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" fill="#FFFFFF" />
+            <polygon points="99,51 108,51 96,65 92,61" fill="#FFFFFF" />
+          </svg>
+        </div>
+      </a>
+
+    </nav>
+  </header>
+
+  <!-- =========================================================
+       2. CONTENEDOR PRINCIPAL DIVIDIDO
+       ========================================================= -->
+  <main class="flex-grow max-w-[1600px] w-full mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-4 sm:gap-5 overflow-hidden">
+
+    <!-- =======================================================
+         LADO IZQUIERDO: VISOR 3D INTERACTIVO (CANCHA CON PASTO Y ÁRBOLES)
+         ======================================================= -->
+    <section class="relative w-full lg:w-[63%] h-[480px] lg:h-full bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden flex-shrink-0">
+      <canvas id="canvas3d"></canvas>
+
+      <!-- Tarjeta flotante superior izquierda -->
+      <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 shadow-md border border-slate-200/80 max-w-xs pointer-events-auto">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-lasalle-blueDark">MODELO 3D INTERACTIVO • ÁREA VERDE</span>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">
+          Arrastra para rotar • Rueda para zoom • Cancha de césped y árboles perimetrales
+        </p>
+      </div>
+
+      <!-- Botones de cámara en pastilla blanca superior derecha -->
+      <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-md border border-slate-200/80 flex items-center gap-1">
+        <button type="button" id="btnViewTop" onclick="setCameraView('top')" class="cam-btn px-3 py-1.5 rounded-xl bg-lasalle-vibrant text-white font-bold text-xs transition-all">
+          Vista Superior
+        </button>
+        <button type="button" id="btnViewStage" onclick="setCameraView('stage')" class="cam-btn px-3 py-1.5 rounded-xl text-slate-700 hover:bg-slate-100 font-bold text-xs transition-all">
+          Vista Frontal
+        </button>
+        <button type="button" id="btnViewSide" onclick="setCameraView('side')" class="cam-btn px-3 py-1.5 rounded-xl text-slate-700 hover:bg-slate-100 font-bold text-xs transition-all">
+          Vista Lateral
+        </button>
+      </div>
+
+      <!-- Leyenda inferior dinámica -->
+      <div id="bottomLegendBar" class="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md text-slate-700 px-4 py-2 rounded-2xl shadow-md border border-slate-200/80 text-xs flex flex-wrap items-center gap-3.5">
+        <span class="font-bold text-slate-800">Elementos:</span>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-sm bg-emerald-600 inline-block"></span>
+          <span>Césped Campus</span>
+        </div>
+        <div id="legendExpoItem" class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-sm bg-lasalle-vibrant inline-block"></span>
+          <span>Stands en U + Isla Central (Máx. 30)</span>
+        </div>
+        <div id="legendConcertItem" class="hidden flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-sm bg-slate-900 inline-block"></span>
+          <span>Escenario + Sillas (Máx. 180)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         LADO DERECHO: PANEL DE RESERVA (ESTILO AZUL Y BLANCO)
+         ======================================================= -->
+    <aside class="w-full lg:w-[37%] lg:h-full bg-white rounded-3xl shadow-sm border border-slate-200/90 flex flex-col overflow-hidden">
+      
+      <!-- CABECERA DEL ESPACIO -->
+      <div class="px-6 pt-5 pb-4 border-b border-slate-100 flex-shrink-0">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-lasalle-vibrant">
+            ESPACIO ABIERTO • CAMPUS CENTRAL
+          </span>
+          <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold border border-emerald-200/80">
+            Disponible
+          </span>
+        </div>
+        <h1 class="font-display text-xl sm:text-2xl font-extrabold text-slate-900 mt-1 tracking-tight">
+          Área Verde de la Universidad
+        </h1>
+        <p class="text-xs text-slate-600 mt-1">
+          Ferias, activaciones y conciertos (Hasta <strong class="text-slate-900">30 stands</strong> o <strong class="text-slate-900">180 sillas</strong>)
+        </p>
+      </div>
+
+      <!-- CONTENIDO SCROLLEABLE -->
+      <div class="flex-grow overflow-y-auto custom-scroll px-6 py-4 space-y-4">
+
+        <!-- 1. FECHAS ACTUALES DISPONIBLES EN BOXES DEL MES -->
+        <div class="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-4">
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-xs font-extrabold text-slate-800">
+              Fechas disponibles — <span id="currentMonthLabel" class="text-lasalle-vibrant">Noviembre 2026</span>
+            </span>
+            <span class="text-[11px] font-semibold text-slate-500">Semestre actual</span>
+          </div>
+
+          <div id="availableDatesGrid" class="grid grid-cols-4 gap-2"></div>
+          <p id="selectedDateFeedback" class="text-[11px] text-slate-500 mt-2">
+            Selecciona una fecha disponible del mes.
+          </p>
+        </div>
+
+        <!-- 2. CALENDARIO PARA ESCOGER EL MES DEL SEMESTRE ACTUAL -->
+        <div class="rounded-2xl border border-slate-200/90 bg-white p-4">
+          <label for="semesterMonthSelect" class="block text-xs font-extrabold text-slate-800 mb-2">
+            Calendario • Escoger mes del semestre actual
+          </label>
+          <select 
+            id="semesterMonthSelect" 
+            onchange="updateMonthDates(this.value)"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+          >
+            <option value="2026-08">Agosto 2026 (Semestre II)</option>
+            <option value="2026-09">Septiembre 2026 (Semestre II)</option>
+            <option value="2026-10">Octubre 2026 (Semestre II)</option>
+            <option value="2026-11" selected>Noviembre 2026 (Mes Actual)</option>
+            <option value="2026-12">Diciembre 2026 (Semestre II)</option>
+          </select>
+        </div>
+
+        <!-- 3. EVENTOS ESPECIALES (VACACIONES / FUERA DE SEMESTRE) -->
+        <div class="rounded-2xl border border-slate-200/90 bg-white p-4 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-slate-800">Eventos especiales (Vacaciones)</span>
+            <span class="text-[10px] font-bold text-lasalle-vibrant bg-lasalle-ice px-2 py-0.5 rounded-full">Fuera de semestre</span>
+          </div>
+          <p class="text-[11px] font-semibold text-slate-500">Requerir disponibilidad</p>
+          <div class="grid grid-cols-2 gap-2">
+            <input 
+              type="date" 
+              id="vacationDate" 
+              value="2027-01-18"
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+            />
+            <input 
+              type="text" 
+              id="vacationReason" 
+              maxlength="40"
+              placeholder="Motivo (pocas palabras)"
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+            />
+          </div>
+          <button 
+            type="button" 
+            onclick="requestVacationAvailability()"
+            class="w-full py-2 px-4 rounded-xl bg-lasalle-ice hover:bg-lasalle-sky text-lasalle-vibrant font-bold text-xs transition-colors"
+          >
+            Requerir
+          </button>
+        </div>
+
+        <!-- 4. CONFIGURACIÓN DINÁMICA DE MONTAJE: EXPO DE EMPRENDIMIENTO VS CONCIERTO -->
+        <div class="rounded-2xl border border-slate-200/90 bg-white overflow-hidden">
+          <button 
+            type="button" 
+            onclick="toggleSetupAccordion()"
+            class="w-full px-4 py-3.5 bg-slate-50/80 hover:bg-slate-100/80 flex items-center justify-between text-left transition-colors"
+          >
+            <div class="flex items-center gap-2.5">
+              <span class="w-6 h-6 rounded-lg bg-lasalle-ice text-lasalle-vibrant flex items-center justify-center text-xs font-bold">M</span>
+              <span class="font-display text-xs sm:text-sm font-extrabold text-slate-900">Tipo de montaje en Área Verde</span>
+            </div>
+            <svg id="setupChevron" class="w-4 h-4 text-lasalle-vibrant transition-transform duration-200 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div id="setupContent" class="p-4 border-t border-slate-100 space-y-3.5 bg-white">
+            <!-- Selector de modalidad -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl">
+              <button 
+                type="button" 
+                id="modeExpoBtn" 
+                onclick="switchEventMode('expo')"
+                class="py-2 px-3 rounded-xl bg-lasalle-vibrant text-white font-display font-bold text-xs shadow-sm transition-all text-center"
+              >
+                Expo Emprendimiento
+              </button>
+              <button 
+                type="button" 
+                id="modeConcertBtn" 
+                onclick="switchEventMode('concert')"
+                class="py-2 px-3 rounded-xl text-slate-700 hover:bg-white/70 font-display font-bold text-xs transition-all text-center"
+              >
+                Concierto
+              </button>
+            </div>
+
+            <!-- PANEL A: EXPO DE EMPRENDIMIENTO (0 a 30 STANDS EN U + ISLA CENTRAL) -->
+            <div id="expoControlsPanel" class="space-y-3">
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Los stands se organizan en forma de <strong>U</strong> alrededor de la cancha (hasta 20 perimetrales) y los restantes se ubican en la <strong>isla central</strong> (máximo <strong>30 stands</strong>).
+              </p>
+
+              <div class="rounded-2xl border border-blue-200/80 bg-lasalle-ice/50 px-4 py-3 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-extrabold text-slate-900">Cantidad de Stands</p>
+                  <p id="standsRangeLabel" class="text-[11px] text-lasalle-blue font-semibold">16 stands en forma de U</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="adjustStands(-1)" class="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 font-extrabold text-sm flex items-center justify-center shadow-sm">-</button>
+                  <input 
+                    type="number" 
+                    id="standsInput" 
+                    min="0" 
+                    max="30" 
+                    value="16" 
+                    oninput="setStandsCount(this.value)"
+                    class="w-12 py-1 text-center rounded-xl border border-blue-200 bg-white text-xs font-extrabold text-lasalle-blueDark focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+                  />
+                  <button type="button" onclick="adjustStands(1)" class="w-8 h-8 rounded-xl bg-lasalle-vibrant hover:bg-lasalle-blue text-white font-extrabold text-sm flex items-center justify-center shadow-sm">+</button>
+                </div>
+              </div>
+
+              <!-- Control deslizante rápido -->
+              <div class="px-1">
+                <input 
+                  type="range" 
+                  id="standsSlider" 
+                  min="0" 
+                  max="30" 
+                  value="16" 
+                  oninput="setStandsCount(this.value)"
+                  class="w-full accent-[#0044FF] cursor-pointer"
+                />
+                <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                  <span>0 stands</span>
+                  <span>20 (U completa)</span>
+                  <span>30 (U + Centro)</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 pt-1">
+                <button type="button" onclick="setStandsCount(20)" class="py-2 px-2 rounded-xl bg-lasalle-ice hover:bg-lasalle-sky text-lasalle-vibrant font-bold text-[11px] transition-colors">
+                  Solo U (20)
+                </button>
+                <button type="button" onclick="setStandsCount(30)" class="py-2 px-2 rounded-xl bg-lasalle-ice hover:bg-lasalle-sky text-lasalle-vibrant font-bold text-[11px] transition-colors">
+                  Lleno (30)
+                </button>
+                <button type="button" onclick="setStandsCount(0)" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition-colors">
+                  Limpiar
+                </button>
+              </div>
+            </div>
+
+            <!-- PANEL B: CONCIERTO (ESCENARIO + SILLAS EDITABLES HASTA 180) -->
+            <div id="concertControlsPanel" class="hidden space-y-3">
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Montaje de <strong>escenario principal</strong> con audio e iluminación y platea de sillas ocupando como máximo el área equivalente a los 30 stands (<strong>hasta 180 sillas</strong>).
+              </p>
+
+              <div class="rounded-2xl border border-indigo-200/80 bg-indigo-50/50 px-4 py-3 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-extrabold text-slate-900">Cantidad de Sillas frente al escenario</p>
+                  <p id="chairsRangeLabel" class="text-[11px] text-lasalle-blue font-semibold">120 sillas instaladas (8 filas)</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="adjustChairs(-12)" class="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 font-extrabold text-sm flex items-center justify-center shadow-sm">-</button>
+                  <input 
+                    type="number" 
+                    id="chairsInput" 
+                    min="0" 
+                    max="180" 
+                    value="120" 
+                    oninput="setChairsCount(this.value)"
+                    class="w-14 py-1 text-center rounded-xl border border-blue-200 bg-white text-xs font-extrabold text-lasalle-blueDark focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+                  />
+                  <button type="button" onclick="adjustChairs(12)" class="w-8 h-8 rounded-xl bg-lasalle-vibrant hover:bg-lasalle-blue text-white font-extrabold text-sm flex items-center justify-center shadow-sm">+</button>
+                </div>
+              </div>
+
+              <!-- Slider de sillas -->
+              <div class="px-1">
+                <input 
+                  type="range" 
+                  id="chairsSlider" 
+                  min="0" 
+                  max="180" 
+                  step="6"
+                  value="120" 
+                  oninput="setChairsCount(this.value)"
+                  class="w-full accent-[#0044FF] cursor-pointer"
+                />
+                <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                  <span>0 (Solo escenario)</span>
+                  <span>90 sillas</span>
+                  <span>Máx. 180 sillas</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 pt-1">
+                <button type="button" onclick="setChairsCount(90)" class="py-2 px-2 rounded-xl bg-lasalle-ice hover:bg-lasalle-sky text-lasalle-vibrant font-bold text-[11px] transition-colors">
+                  90 Sillas
+                </button>
+                <button type="button" onclick="setChairsCount(180)" class="py-2 px-2 rounded-xl bg-lasalle-ice hover:bg-lasalle-sky text-lasalle-vibrant font-bold text-[11px] transition-colors">
+                  Aforo Máx (180)
+                </button>
+                <button type="button" onclick="setChairsCount(0)" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition-colors">
+                  Solo Escenario
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PIE DE RESERVA -->
+      <div class="px-6 py-4 bg-white border-t border-slate-100 flex-shrink-0">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <span class="text-[11px] text-slate-500 block">Capacidad configurada</span>
+            <span id="footerCapacitySummary" class="font-display text-sm font-extrabold text-lasalle-blueDark">
+              Expo: 16 de 30 stands máximos
+            </span>
+          </div>
+          <div class="text-right">
+            <span class="text-[11px] text-slate-400 block">Solicitante</span>
+            <span class="text-xs font-extrabold text-lasalle-vibrant">Elías</span>
+          </div>
+        </div>
+        <button 
+          type="button" 
+          onclick="window.location.href='reserva.html'"
+          class="w-full py-3.5 px-5 rounded-2xl bg-lasalle-gradient hover:opacity-95 text-white font-display font-extrabold text-sm tracking-wide shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2"
+        >
+          <span>Reservar</span>
+        </button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- Notificación Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-lasalle-gradient text-white px-5 py-3.5 rounded-xl shadow-xl border border-white/25 flex items-center gap-3 text-sm font-medium max-w-md">
+      <span class="w-2.5 h-2.5 rounded-full bg-white animate-pulse flex-shrink-0"></span>
+      <span id="toastMessage">Mensaje</span>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCRIPTS: FECHAS, DISTRIBUCIÓN EN U + CENTRO Y CONCIERTO
+       ========================================================= -->
+  <script>
+    // 1. Menú de Usuario
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdown = document.getElementById('userDropdown');
+    const userChevron = document.getElementById('userChevron');
+
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = userDropdown.classList.contains('hidden');
+      userDropdown.classList.toggle('hidden');
+      userChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    });
+
+    document.addEventListener('click', () => {
+      userDropdown.classList.add('hidden');
+      userChevron.style.transform = 'rotate(0deg)';
+    });
+
+    // 2. Fechas del Semestre Actual
+    const semesterAvailability = {
+      '2026-08': { label: 'Agosto 2026', dates: ['07 Ago', '12 Ago', '15 Ago', '20 Ago', '24 Ago', '28 Ago', '31 Ago'] },
+      '2026-09': { label: 'Septiembre 2026', dates: ['04 Sep', '09 Sep', '14 Sep', '18 Sep', '22 Sep', '26 Sep', '30 Sep'] },
+      '2026-10': { label: 'Octubre 2026', dates: ['03 Oct', '09 Oct', '14 Oct', '17 Oct', '22 Oct', '26 Oct', '31 Oct'] },
+      '2026-11': { label: 'Noviembre 2026', dates: ['05 Nov', '10 Nov', '14 Nov', '19 Nov', '23 Nov', '27 Nov', '30 Nov'] },
+      '2026-12': { label: 'Diciembre 2026', dates: ['03 Dic', '07 Dic', '11 Dic', '15 Dic', '18 Dic', '21 Dic'] }
+    };
+
+    let selectedDateBox = null;
+
+    function updateMonthDates(monthKey) {
+      const data = semesterAvailability[monthKey];
+      document.getElementById('currentMonthLabel').textContent = data.label;
+      const grid = document.getElementById('availableDatesGrid');
+      grid.innerHTML = '';
+      selectedDateBox = null;
+      document.getElementById('selectedDateFeedback').textContent = 'Selecciona una fecha disponible del mes.';
+
+      data.dates.forEach((dateStr) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'date-box px-2 py-2 rounded-xl border border-slate-200 bg-white hover:bg-lasalle-ice text-xs font-bold text-slate-700 transition-all text-center';
+        btn.textContent = dateStr;
+        btn.onclick = () => {
+          document.querySelectorAll('.date-box').forEach(b => {
+            b.classList.remove('bg-lasalle-vibrant', 'text-white', 'border-lasalle-vibrant');
+            b.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+          });
+          btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+          btn.classList.add('bg-lasalle-vibrant', 'text-white', 'border-lasalle-vibrant');
+          selectedDateBox = `${dateStr} (${data.label})`;
+          document.getElementById('selectedDateFeedback').innerHTML = `Fecha elegida: <strong class="text-lasalle-vibrant">${selectedDateBox}</strong>`;
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function requestVacationAvailability() {
+      const dateVal = document.getElementById('vacationDate').value;
+      const reasonVal = document.getElementById('vacationReason').value.trim();
+      if (!dateVal || !reasonVal) {
+        showToast('Ingresa la fecha y un motivo breve para requerir disponibilidad.');
+        return;
+      }
+      document.getElementById('vacationReason').value = '';
+      showToast(`Disponibilidad requerida por Elías para el ${dateVal} ("${reasonVal}").`);
+    }
+
+    function toggleSetupAccordion() {
+      const content = document.getElementById('setupContent');
+      const chevron = document.getElementById('setupChevron');
+      const isHidden = content.classList.contains('hidden');
+      content.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180', isHidden);
+    }
+
+    // ---------------------------------------------------------
+    // 3. ESCENA 3D WEBGL: CANCHA DE CÉSPED Y ÁRBOLES ALREDEDOR
+    // ---------------------------------------------------------
+    const canvas = document.getElementById('canvas3d');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xdce8f5);
+    scene.fog = new THREE.Fog(0xdce8f5, 38, 78);
+
+    const camera = new THREE.PerspectiveCamera(42, canvas.parentElement.clientWidth / canvas.parentElement.clientHeight, 0.1, 120);
+    camera.position.set(0, 24, 15.5);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(canvas.parentElement.clientWidth, canvas.parentElement.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxPolarAngle = Math.PI / 2.08;
+    controls.minDistance = 8;
+    controls.maxDistance = 42;
+    controls.target.set(0, 0.4, 0);
+
+    // Iluminación
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.78);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xfffbeb, 0.85);
+    sunLight.position.set(12, 26, 14);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.left = -22;
+    sunLight.shadow.camera.right = 22;
+    sunLight.shadow.camera.top = 22;
+    sunLight.shadow.camera.bottom = -22;
+    scene.add(sunLight);
+
+    // Sendero peatonal exterior
+    const walkwayMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(28, 0.25, 33),
+      new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.85 })
+    );
+    walkwayMesh.position.y = -0.15;
+    walkwayMesh.receiveShadow = true;
+    scene.add(walkwayMesh);
+
+    // Cancha de césped
+    const grassCanvas = document.createElement('canvas');
+    grassCanvas.width = 512;
+    grassCanvas.height = 512;
+    const gCtx = grassCanvas.getContext('2d');
+    const stripeCount = 8;
+    const stripeW = 512 / stripeCount;
+    for (let i = 0; i < stripeCount; i++) {
+      gCtx.fillStyle = i % 2 === 0 ? '#2e8b3c' : '#359c44';
+      gCtx.fillRect(i * stripeW, 0, stripeW, 512);
+    }
+    gCtx.strokeStyle = 'rgba(255,255,255,0.35)';
+    gCtx.lineWidth = 6;
+    gCtx.strokeRect(10, 10, 492, 492);
+
+    const grassTex = new THREE.CanvasTexture(grassCanvas);
+    grassTex.wrapS = THREE.RepeatWrapping;
+    grassTex.wrapT = THREE.RepeatWrapping;
+
+    const fieldWidth = 19.5;
+    const fieldDepth = 24.5;
+    const grassField = new THREE.Mesh(
+      new THREE.BoxGeometry(fieldWidth, 0.22, fieldDepth),
+      new THREE.MeshStandardMaterial({ map: grassTex, roughness: 0.9 })
+    );
+    grassField.position.y = -0.05;
+    grassField.receiveShadow = true;
+    scene.add(grassField);
+
+    // Árboles alrededor de la cancha
+    function createTree(x, z, scale = 1) {
+      const tree = new THREE.Group();
+      tree.position.set(x, 0.05, z);
+      tree.scale.setScalar(scale);
+
+      const trunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.18, 0.28, 1.8, 10),
+        new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 })
+      );
+      trunk.position.y = 0.9;
+      trunk.castShadow = true;
+      tree.add(trunk);
+
+      const foliageMat1 = new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.8 });
+      const foliageMat2 = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.75 });
+
+      const crown1 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.35, 1), foliageMat1);
+      crown1.position.set(0, 2.5, 0);
+      crown1.castShadow = true;
+      tree.add(crown1);
+
+      const crown2 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.05, 1), foliageMat2);
+      crown2.position.set(0.55, 3.1, 0.35);
+      crown2.castShadow = true;
+      tree.add(crown2);
+
+      const crown3 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.95, 1), foliageMat2);
+      crown3.position.set(-0.5, 2.95, -0.3);
+      crown3.castShadow = true;
+      tree.add(crown3);
+
+      scene.add(tree);
+    }
+
+    for (let z = -13; z <= 13; z += 4.3) {
+      createTree(-11.4, z, 0.95 + (Math.abs(z) % 3) * 0.12);
+      createTree(11.4, z + 1.2, 1.0 + (Math.abs(z) % 2) * 0.15);
+    }
+    for (let x = -9; x <= 9; x += 4.5) {
+      createTree(x, -14.2, 1.05);
+      createTree(x + 1.5, 14.2, 0.95);
+    }
+
+    // Bancas laterales
+    [-6, 0, 6].forEach((bz) => {
+      [-10.2, 10.2].forEach((bx) => {
+        const bench = new THREE.Mesh(
+          new THREE.BoxGeometry(0.55, 0.42, 1.8),
+          new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.7 })
+        );
+        bench.position.set(bx, 0.25, bz);
+        bench.castShadow = true;
+        scene.add(bench);
+      });
+    });
+
+    // ---------------------------------------------------------
+    // 4. DISTRIBUCIÓN EN FORMA DE "U" (20 STANDS) + ISLA CENTRAL (10 STANDS) = 30 MÁX.
+    // ---------------------------------------------------------
+    const expoGroup = new THREE.Group();
+    scene.add(expoGroup);
+
+    const standMeshes = [];
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.5, roughness: 0.3 });
+    const tableClothMat = new THREE.MeshStandardMaterial({ color: 0x0038e0, roughness: 0.6 });
+    const tableTopMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+
+    function createStandRoofTexture(num) {
+      const c = document.createElement('canvas');
+      c.width = 256;
+      c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 256, 256);
+
+      ctx.fillStyle = '#0044FF';
+      ctx.fillRect(0, 0, 256, 34);
+      ctx.fillRect(0, 222, 256, 34);
+      ctx.fillRect(0, 0, 34, 256);
+      ctx.fillRect(222, 0, 34, 256);
+
+      ctx.beginPath();
+      ctx.arc(128, 128, 54, 0, Math.PI * 2);
+      ctx.fillStyle = '#0026B8';
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 46px Montserrat, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(num), 128, 130);
+
+      return new THREE.CanvasTexture(c);
+    }
+
+    // Coordenadas exactas:
+    // Primero se arma la U (7 brazo izquierdo, 6 fondo norte, 7 brazo derecho = 20 stands)
+    // Luego los stands 21 al 30 (los que no entran en la U) se colocan en el centro (2 columnas x 5 filas)
+    const standPositions = [];
+
+    // 1. Brazo izquierdo de la U (de frente hacia el fondo, mirando hacia +X / centro)
+    for (let i = 0; i < 7; i++) {
+      standPositions.push({ x: -7.5, z: 7.8 - i * 2.55, rotY: Math.PI / 2 });
+    }
+    // 2. Fondo superior de la U (de izquierda a derecha, mirando hacia +Z / centro)
+    for (let i = 0; i < 6; i++) {
+      standPositions.push({ x: -5.25 + i * 2.1, z: -9.8, rotY: 0 });
+    }
+    // 3. Brazo derecho de la U (del fondo hacia el frente, mirando hacia -X / centro)
+    for (let i = 0; i < 7; i++) {
+      standPositions.push({ x: 7.5, z: -7.5 + i * 2.55, rotY: -Math.PI / 2 });
+    }
+    // 4. Isla central (stands #21 al #30: 2 columnas espalda con espalda mirando hacia los pasillos de la U)
+    for (let r = 0; r < 5; r++) {
+      const cz = -4.2 + r * 2.65;
+      standPositions.push({ x: -1.35, z: cz, rotY: -Math.PI / 2 });
+      standPositions.push({ x: 1.35, z: cz, rotY: Math.PI / 2 });
+    }
+
+    standPositions.forEach((pos, index) => {
+      const standNum = index + 1;
+      const stand = new THREE.Group();
+      stand.position.set(pos.x, 0.06, pos.z);
+      stand.rotation.y = pos.rotY;
+
+      const half = 0.82;
+      [[-half, -half], [half, -half], [-half, half], [half, half]].forEach(([px, pz]) => {
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 2.05, 8), poleMat);
+        pole.position.set(px, 1.02, pz);
+        pole.castShadow = true;
+        stand.add(pole);
+      });
+
+      const canopy = new THREE.Mesh(
+        new THREE.ConeGeometry(1.32, 0.45, 4),
+        new THREE.MeshStandardMaterial({
+          map: createStandRoofTexture(standNum),
+          roughness: 0.45
+        })
+      );
+      canopy.position.y = 2.25;
+      canopy.rotation.y = Math.PI / 4;
+      canopy.castShadow = true;
+      stand.add(canopy);
+
+      // Mostrador orientado hacia el interior de la U / pasillo
+      const counterBase = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.72, 0.55), tableClothMat);
+      counterBase.position.set(0, 0.36, 0.45);
+      counterBase.castShadow = true;
+      stand.add(counterBase);
+
+      const counterTop = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.06, 0.62), tableTopMat);
+      counterTop.position.set(0, 0.74, 0.45);
+      stand.add(counterTop);
+
+      expoGroup.add(stand);
+      standMeshes.push(stand);
+    });
+
+    // ---------------------------------------------------------
+    // 5. GRUPO B: ESCENARIO DE CONCIERTO + SILLAS (MISMA ÁREA QUE LOS 30 STANDS)
+    // ---------------------------------------------------------
+    const concertGroup = new THREE.Group();
+    concertGroup.visible = false;
+    scene.add(concertGroup);
+
+    const stageGroup = new THREE.Group();
+    stageGroup.position.set(0, 0.06, -8.3);
+    concertGroup.add(stageGroup);
+
+    const stageDeck = new THREE.Mesh(
+      new THREE.BoxGeometry(11.5, 0.85, 4.4),
+      new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.6 })
+    );
+    stageDeck.position.y = 0.425;
+    stageDeck.castShadow = true;
+    stageDeck.receiveShadow = true;
+    stageGroup.add(stageDeck);
+
+    const stageTrim = new THREE.Mesh(
+      new THREE.BoxGeometry(11.6, 0.14, 4.5),
+      new THREE.MeshStandardMaterial({ color: 0x0044FF, emissive: 0x0026B8, emissiveIntensity: 0.3 })
+    );
+    stageTrim.position.y = 0.82;
+    stageGroup.add(stageTrim);
+
+    const trussMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.75, roughness: 0.25 });
+    [[-5.4, -1.9], [5.4, -1.9], [-5.4, 1.9], [5.4, 1.9]].forEach(([tx, tz]) => {
+      const tower = new THREE.Mesh(new THREE.BoxGeometry(0.28, 4.2, 0.28), trussMat);
+      tower.position.set(tx, 2.95, tz);
+      tower.castShadow = true;
+      stageGroup.add(tower);
+    });
+
+    const stageRoof = new THREE.Mesh(
+      new THREE.BoxGeometry(11.8, 0.28, 4.6),
+      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 })
+    );
+    stageRoof.position.y = 5.1;
+    stageRoof.castShadow = true;
+    stageGroup.add(stageRoof);
+
+    const ledCanvas = document.createElement('canvas');
+    ledCanvas.width = 512;
+    ledCanvas.height = 256;
+    const lCtx = ledCanvas.getContext('2d');
+    const grad = lCtx.createLinearGradient(0, 0, 512, 256);
+    grad.addColorStop(0, '#0044FF');
+    grad.addColorStop(1, '#00187A');
+    lCtx.fillStyle = grad;
+    lCtx.fillRect(0, 0, 512, 256);
+    lCtx.fillStyle = '#ffffff';
+    lCtx.font = 'bold 34px Montserrat, sans-serif';
+    lCtx.textAlign = 'center';
+    lCtx.fillText('LA SALLE FEST • AREQUIPA', 256, 110);
+    lCtx.font = '20px Inter, sans-serif';
+    lCtx.fillStyle = '#bfdbfe';
+    lCtx.fillText('Área Verde • Eventos & Conciertos Estudiantiles', 256, 155);
+
+    const ledBackdrop = new THREE.Mesh(
+      new THREE.BoxGeometry(7.2, 2.8, 0.12),
+      new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(ledCanvas), emissive: 0x1d4ed8, emissiveIntensity: 0.25 })
+    );
+    ledBackdrop.position.set(0, 2.55, -1.75);
+    stageGroup.add(ledBackdrop);
+
+    [-6.3, 6.3].forEach((sx) => {
+      const speakerStack = new THREE.Mesh(
+        new THREE.BoxGeometry(0.95, 3.2, 0.95),
+        new THREE.MeshStandardMaterial({ color: 0x09090b, roughness: 0.4 })
+      );
+      speakerStack.position.set(sx, 2.45, 1.4);
+      speakerStack.castShadow = true;
+      stageGroup.add(speakerStack);
+    });
+
+    // Sillas para concierto (hasta 180 sillas ocupando el área de los 30 stands)
+    const concertChairMeshes = [];
+    const chairSeatMat = new THREE.MeshStandardMaterial({ color: 0x0044FF, roughness: 0.45 });
+    const chairBackMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+    const chairLegMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.6 });
+
+    const chairRows = 12;
+    const chairCols = 15;
+    const startChairZ = -4.3;
+    const chairSpacingZ = 1.12;
+
+    for (let r = 0; r < chairRows; r++) {
+      for (let c = 0; c < chairCols; c++) {
+        const offsetAisle = c >= 7 ? 0.65 : -0.65;
+        const cx = (c - (chairCols - 1) / 2) * 0.92 + offsetAisle;
+        const cz = startChairZ + r * chairSpacingZ;
+
+        const chair = new THREE.Group();
+        chair.position.set(cx, 0.06, cz);
+
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.07, 0.44), chairSeatMat);
+        seat.position.y = 0.42;
+        seat.castShadow = true;
+        chair.add(seat);
+
+        const back = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.38, 0.06), chairBackMat);
+        back.position.set(0, 0.64, 0.19);
+        back.castShadow = true;
+        chair.add(back);
+
+        const base = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.4), chairLegMat);
+        base.position.y = 0.21;
+        chair.add(base);
+
+        concertGroup.add(chair);
+        concertChairMeshes.push(chair);
+      }
+    }
+
+    // ---------------------------------------------------------
+    // 6. CONTROL DE MODO: EXPO DE EMPRENDIMIENTO VS CONCIERTO
+    // ---------------------------------------------------------
+    let currentEventMode = 'expo';
+    let currentStandsCount = 16;
+    let currentChairsCount = 120;
+
+    function switchEventMode(mode) {
+      currentEventMode = mode;
+      const modeExpoBtn = document.getElementById('modeExpoBtn');
+      const modeConcertBtn = document.getElementById('modeConcertBtn');
+      const expoPanel = document.getElementById('expoControlsPanel');
+      const concertPanel = document.getElementById('concertControlsPanel');
+      const legendExpo = document.getElementById('legendExpoItem');
+      const legendConcert = document.getElementById('legendConcertItem');
+
+      if (mode === 'expo') {
+        modeExpoBtn.className = 'py-2 px-3 rounded-xl bg-lasalle-vibrant text-white font-display font-bold text-xs shadow-sm transition-all text-center';
+        modeConcertBtn.className = 'py-2 px-3 rounded-xl text-slate-700 hover:bg-white/70 font-display font-bold text-xs transition-all text-center';
+        expoPanel.classList.remove('hidden');
+        concertPanel.classList.add('hidden');
+        legendExpo.classList.remove('hidden');
+        legendConcert.classList.add('hidden');
+
+        expoGroup.visible = true;
+        concertGroup.visible = false;
+        setStandsCount(currentStandsCount);
+      } else {
+        modeConcertBtn.className = 'py-2 px-3 rounded-xl bg-lasalle-vibrant text-white font-display font-bold text-xs shadow-sm transition-all text-center';
+        modeExpoBtn.className = 'py-2 px-3 rounded-xl text-slate-700 hover:bg-white/70 font-display font-bold text-xs transition-all text-center';
+        concertPanel.classList.remove('hidden');
+        expoPanel.classList.add('hidden');
+        legendConcert.classList.remove('hidden');
+        legendExpo.classList.add('hidden');
+
+        expoGroup.visible = false;
+        concertGroup.visible = true;
+        setChairsCount(currentChairsCount);
+      }
+    }
+
+    function setStandsCount(val) {
+      let count = parseInt(val, 10);
+      if (isNaN(count)) count = 0;
+      count = Math.max(0, Math.min(30, count));
+      currentStandsCount = count;
+
+      document.getElementById('standsInput').value = count;
+      document.getElementById('standsSlider').value = count;
+
+      if (count === 0) {
+        document.getElementById('standsRangeLabel').textContent = 'Ningún stand colocado';
+      } else if (count <= 20) {
+        document.getElementById('standsRangeLabel').textContent = `${count} stands en forma de U`;
+      } else {
+        document.getElementById('standsRangeLabel').textContent = `20 en U + ${count - 20} en el centro`;
+      }
+
+      document.getElementById('footerCapacitySummary').textContent = `Expo: ${count} de 30 stands máximos`;
+
+      standMeshes.forEach((mesh, idx) => {
+        mesh.visible = idx < count;
+      });
+    }
+
+    function adjustStands(delta) {
+      setStandsCount(currentStandsCount + delta);
+    }
+
+    function setChairsCount(val) {
+      let count = parseInt(val, 10);
+      if (isNaN(count)) count = 0;
+      count = Math.max(0, Math.min(180, count));
+      currentChairsCount = count;
+
+      document.getElementById('chairsInput').value = count;
+      document.getElementById('chairsSlider').value = count;
+      const rowsUsed = Math.ceil(count / 15);
+      document.getElementById('chairsRangeLabel').textContent = count === 0
+        ? 'Solo escenario (sin sillas)'
+        : `${count} sillas instaladas (${rowsUsed} ${rowsUsed === 1 ? 'fila' : 'filas'})`;
+
+      document.getElementById('footerCapacitySummary').textContent = `Concierto: Escenario + ${count} sillas`;
+
+      concertChairMeshes.forEach((mesh, idx) => {
+        mesh.visible = idx < count;
+      });
+    }
+
+    function adjustChairs(delta) {
+      setChairsCount(currentChairsCount + delta);
+    }
+
+    // ---------------------------------------------------------
+    // 7. VISTAS DE CÁMARA Y CONFIRMACIÓN DE RESERVA
+    // ---------------------------------------------------------
+    function setCameraView(mode) {
+      document.querySelectorAll('.cam-btn').forEach(btn => {
+        btn.classList.remove('bg-lasalle-vibrant', 'text-white');
+        btn.classList.add('text-slate-700', 'hover:bg-slate-100');
+      });
+
+      if (mode === 'top') {
+        document.getElementById('btnViewTop').classList.add('bg-lasalle-vibrant', 'text-white');
+        document.getElementById('btnViewTop').classList.remove('text-slate-700', 'hover:bg-slate-100');
+        camera.position.set(0, 24, 15.5);
+        controls.target.set(0, 0.4, 0);
+      } else if (mode === 'stage') {
+        document.getElementById('btnViewStage').classList.add('bg-lasalle-vibrant', 'text-white');
+        document.getElementById('btnViewStage').classList.remove('text-slate-700', 'hover:bg-slate-100');
+        camera.position.set(0, 6.2, 16.5);
+        controls.target.set(0, 1.5, -6.5);
+      } else if (mode === 'side') {
+        document.getElementById('btnViewSide').classList.add('bg-lasalle-vibrant', 'text-white');
+        document.getElementById('btnViewSide').classList.remove('text-slate-700', 'hover:bg-slate-100');
+        camera.position.set(19, 13.5, 4.5);
+        controls.target.set(0, 0.5, 0);
+      }
+      controls.update();
+    }
+
+    function confirmGreenAreaBooking() {
+      const dateInfo = selectedDateBox || 'Noviembre 2026';
+      const setupDetail = currentEventMode === 'expo'
+        ? `Expo de Emprendimiento (${currentStandsCount} stands)`
+        : `Concierto con escenario (${currentChairsCount} sillas)`;
+
+      showToast(`Reserva confirmada por Elías • Área Verde de la Universidad • ${dateInfo} • ${setupDetail}.`);
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 4500);
+    }
+
+    window.addEventListener('resize', () => {
+      const parent = canvas.parentElement;
+      camera.aspect = parent.clientWidth / parent.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(parent.clientWidth, parent.clientHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // Inicializar estado
+    updateMonthDates('2026-11');
+    setStandsCount(16);
+    animate();
+  </script>
+</body>
+</html>

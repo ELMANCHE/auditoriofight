@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil | LaSalle Universidad Arequipa</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lasalle: {
+              blue: '#0038E0',
+              vibrant: '#0044FF',
+              blueDark: '#0022A8',
+              blueDeep: '#00187A',
+              ice: '#EBF2FF',
+              sky: '#D6E4FF',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .bg-lasalle-gradient {
+      background: linear-gradient(135deg, #0044FF 0%, #0026B8 100%);
+    }
+
+    /* Efecto 3D Tilt para el Carnet Universitario Digital */
+    .id-card-perspective {
+      perspective: 1100px;
+    }
+
+    .id-card-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.18s ease-out, box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .id-card-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.28), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .id-card-3d:hover .id-card-glare {
+      opacity: 1;
+    }
+
+    /* Animación suave de paneles */
+    @keyframes panelFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tab-panel-active {
+      animation: panelFade 0.28s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-lasalle-vibrant selection:text-white">
+
+  <!-- =========================================================
+       1. BARRA SUPERIOR INSTITUCIONAL (IDÉNTICA A LAS ANTERIORES)
+       ========================================================= -->
+  <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 sticky top-0 z-40 border-b border-white/20">
+    <nav aria-label="Navegación principal" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Parte Izquierda: Usuario Elías -->
+      <div class="relative" id="userMenuContainer">
+        <button 
+          id="userMenuBtn"
+          type="button"
+          aria-label="Perfil de usuario"
+          class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="hidden sm:flex flex-col text-left">
+            <span class="text-xs text-blue-100 font-medium leading-none">Portal Académico</span>
+            <span class="text-sm font-semibold text-white leading-tight mt-0.5 flex items-center gap-1">
+              <span id="navUserName">Elías</span>
+              <svg class="w-3.5 h-3.5 text-white transition-transform duration-200" id="userChevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
+        </button>
+
+        <!-- Dropdown de Perfil -->
+        <div 
+          id="userDropdown" 
+          class="hidden absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-xl shadow-blue-950/15 border border-blue-100 py-2 text-slate-700 z-50"
+        >
+          <div class="px-4 py-3 border-b border-blue-50">
+            <p class="text-xs font-bold uppercase tracking-wider text-lasalle-vibrant">Comunidad Lasallista</p>
+            <p class="text-sm font-semibold text-slate-900 mt-0.5" id="dropUserName">Elías</p>
+            <p class="text-xs text-slate-500">elias@ulasalle.edu.pe</p>
+          </div>
+          <div class="py-1">
+            <a href="index.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice text-slate-700 hover:text-lasalle-blue transition-colors">
+              Ir al inicio
+            </a>
+            <a href="./myreservas.html" class="block px-4 py-2.5 text-sm hover:bg-lasalle-ice text-slate-700 hover:text-lasalle-blue transition-colors">
+              Mis reservas
+            </a>
+            <a href="./index.html" class="block px-4 py-2.5 text-sm hover:bg-red-50 text-red-600 font-medium transition-colors">
+              Cerrar sesión
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parte Derecha: Logotipo Oficial LaSalle Universidad Arequipa -->
+      <a href="index.html" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+        <div class="text-right flex flex-col justify-center">
+          <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
+            LaSalle
+          </span>
+          <span class="font-sans text-[11px] sm:text-xs font-medium tracking-wide text-blue-100 leading-tight mt-0.5">
+            Universidad <span class="text-white font-semibold">&bull; Arequipa</span>
+          </span>
+        </div>
+
+        <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/30 flex items-center justify-center p-1.5 shadow-sm group-hover:bg-white/25 transition-all">
+          <svg viewBox="0 0 120 115" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrella LaSalle Arequipa">
+            <polygon points="58,6 45,42 54,42 58,28" fill="#FFFFFF" />
+            <polygon points="62,14 69,34 61,34 58,24" fill="#FFFFFF" />
+            <polygon points="8,43 44,43 38,54 24,54" fill="#FFFFFF" />
+            <polygon points="27,57 41,57 35,66" fill="#FFFFFF" />
+            <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" fill="#FFFFFF" />
+            <polygon points="31,101 64,87 62,93 28,108" fill="#FFFFFF" />
+            <polygon points="64,37 112,37 104,47 62,47" fill="#FFFFFF" />
+            <polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" fill="#FFFFFF" />
+            <polygon points="99,51 108,51 96,65 92,61" fill="#FFFFFF" />
+          </svg>
+        </div>
+      </a>
+
+    </nav>
+  </header>
+
+  <!-- =========================================================
+       2. CONTENIDO PRINCIPAL: PERFIL DE USUARIO DINÁMICO HTML5
+       ========================================================= -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+    <!-- Cabecera de Bienvenida + Accesos Rápidos -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+      <div>
+        <span class="text-xs font-extrabold uppercase tracking-widest text-lasalle-vibrant">
+          Identidad Digital Universitaria
+        </span>
+        <h1 class="font-display text-3xl sm:text-4xl font-extrabold text-lasalle-blueDark tracking-tight mt-1">
+          Perfil de usuario
+        </h1>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="./myreservas.html" class="px-5 py-2.5 rounded-xl bg-white hover:bg-lasalle-ice text-lasalle-blueDark border border-blue-200 font-display font-bold text-xs tracking-wide shadow-sm transition-all">
+          Mis reservas (2 activas)
+        </a>
+        <a href="index.html" class="px-5 py-2.5 rounded-xl bg-lasalle-gradient hover:opacity-95 text-white font-display font-bold text-xs tracking-wide shadow-md shadow-blue-600/20 transition-all">
+          Nueva reserva
+        </a>
+      </div>
+    </div>
+
+    <!-- Grid Principal: Izquierda (Carnet 3D Interactivo + Métricas) / Derecha (Panel Dinámico por Pestañas) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
+
+      <!-- =======================================================
+           COLUMNA IZQUIERDA (5 COLS): CARNET 3D INTERACTIVO + ESTADÍSTICAS
+           ======================================================= -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- CARNET UNIVERSITARIO DIGITAL 3D (RESPONDE AL CURSOR) -->
+        <div class="id-card-perspective">
+          <div id="digitalIdCard" class="id-card-3d bg-lasalle-gradient rounded-3xl p-6 sm:p-7 text-white shadow-2xl shadow-blue-900/25 border border-white/25">
+            <div id="cardGlare" class="id-card-glare"></div>
+
+            <!-- Marca de agua geométrica -->
+            <svg class="absolute -right-10 -bottom-10 w-52 h-52 text-white/[0.07] pointer-events-none" viewBox="0 0 120 115" fill="currentColor">
+              <polygon points="58,6 45,42 54,42 58,28" />
+              <polygon points="62,14 69,34 61,34 58,24" />
+              <polygon points="8,43 44,43 38,54 24,54" />
+              <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" />
+              <polygon points="64,37 112,37 104,47 62,47" />
+              <polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" />
+            </svg>
+
+            <!-- Encabezado del Carnet -->
+            <div class="flex items-center justify-between border-b border-white/20 pb-4">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-200 block">Credencial Institucional</span>
+                <span class="font-display text-base font-extrabold tracking-tight">LaSalle Universidad • Arequipa</span>
+              </div>
+              <span id="statusPill" class="px-3 py-1 rounded-full bg-white/20 border border-white/30 text-[11px] font-bold tracking-wide">
+                Activo
+              </span>
+            </div>
+
+            <!-- Datos Principales del Usuario -->
+            <div class="py-6 flex items-center gap-4">
+              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white text-lasalle-vibrant flex items-center justify-center font-display text-2xl sm:text-3xl font-extrabold shadow-lg flex-shrink-0" id="cardInitials">
+                EL
+              </div>
+              <div class="min-w-0">
+                <h2 id="cardFullName" class="font-display text-xl sm:text-2xl font-extrabold text-white truncate">
+                  Elías
+                </h2>
+                <p id="cardCareer" class="text-xs sm:text-sm text-blue-100 font-medium mt-0.5 truncate">
+                  Ingeniería de Software
+                </p>
+                <p id="cardRole" class="text-xs text-blue-200 mt-1">
+                  Organizador de Eventos Estudiantiles
+                </p>
+              </div>
+            </div>
+
+            <!-- Pie del Carnet: Código + QR Vectorial Dinámico -->
+            <div class="pt-4 border-t border-white/20 flex items-end justify-between gap-4">
+              <div class="space-y-1">
+                <div>
+                  <span class="text-[10px] uppercase tracking-widest text-blue-200 block">Código Universitario</span>
+                  <span id="cardStudentId" class="font-mono text-sm font-bold tracking-wider">2023-104892</span>
+                </div>
+                <div>
+                  <span class="text-[10px] uppercase tracking-widest text-blue-200 block">Correo Institucional</span>
+                  <span class="text-xs font-medium text-white">elias@ulasalle.edu.pe</span>
+                </div>
+              </div>
+
+              <!-- QR Vectorial SVG de acceso a recintos -->
+              <div class="bg-white p-2 rounded-xl shadow-md flex-shrink-0" title="Código QR de validación en auditorios">
+                <svg id="qrSvg" class="w-14 h-14 text-lasalle-blueDeep" viewBox="0 0 36 36" fill="currentColor">
+                  <rect x="2" y="2" width="10" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                  <rect x="5" y="5" width="4" height="4"/>
+                  <rect x="24" y="2" width="10" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                  <rect x="27" y="5" width="4" height="4"/>
+                  <rect x="2" y="24" width="10" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                  <rect x="5" y="27" width="4" height="4"/>
+                  <rect x="15" y="3" width="3" height="3"/>
+                  <rect x="19" y="7" width="3" height="6"/>
+                  <rect x="15" y="15" width="6" height="6"/>
+                  <rect x="3" y="15" width="6" height="3"/>
+                  <rect x="24" y="15" width="4" height="4"/>
+                  <rect x="30" y="18" width="4" height="6"/>
+                  <rect x="16" y="25" width="5" height="4"/>
+                  <rect x="24" y="27" width="4" height="7"/>
+                  <rect x="30" y="29" width="4" height="5"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center mt-2">
+            Mueve el cursor sobre la credencial para vista tridimensional
+          </p>
+        </div>
+
+        <!-- MÉTRICAS DE USO EN EL CAMPUS (ANILLOS SVG ANIMADOS) -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-blue-100">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-lasalle-vibrant">Actividad Semestre 2026-II</span>
+              <h3 class="font-display text-base font-extrabold text-slate-900">Resumen de reservas</h3>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-lasalle-ice text-lasalle-blue text-xs font-extrabold">
+              100% Puntualidad
+            </span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <!-- Métrica 1 -->
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center">
+              <div class="relative w-14 h-14 flex items-center justify-center">
+                <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#e2e8f0" stroke-width="3.2"/>
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#0044FF" stroke-width="3.2" stroke-dasharray="70 100" stroke-linecap="round"/>
+                </svg>
+                <span class="absolute font-display text-sm font-extrabold text-lasalle-blueDark">2</span>
+              </div>
+              <span class="text-[11px] font-bold text-slate-700 mt-2">Activas</span>
+            </div>
+
+            <!-- Métrica 2 -->
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center">
+              <div class="relative w-14 h-14 flex items-center justify-center">
+                <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#e2e8f0" stroke-width="3.2"/>
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#0026B8" stroke-width="3.2" stroke-dasharray="88 100" stroke-linecap="round"/>
+                </svg>
+                <span class="absolute font-display text-sm font-extrabold text-lasalle-blueDark">7</span>
+              </div>
+              <span class="text-[11px] font-bold text-slate-700 mt-2">Completadas</span>
+            </div>
+
+            <!-- Métrica 3 -->
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center">
+              <div class="relative w-14 h-14 flex items-center justify-center">
+                <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#e2e8f0" stroke-width="3.2"/>
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#38bdf8" stroke-width="3.2" stroke-dasharray="55 100" stroke-linecap="round"/>
+                </svg>
+                <span class="absolute font-display text-sm font-extrabold text-lasalle-blueDark">340</span>
+              </div>
+              <span class="text-[11px] font-bold text-slate-700 mt-2">Asistentes</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =======================================================
+           COLUMNA DERECHA (7 COLS): GESTIÓN INTERACTIVA DEL PERFIL
+           ======================================================= -->
+      <div class="lg:col-span-7 bg-white rounded-3xl shadow-sm border border-blue-100 overflow-hidden">
+        
+        <!-- Navegación Interna por Pestañas -->
+        <div class="px-6 pt-5 border-b border-slate-100 flex flex-wrap gap-2">
+          <button 
+            type="button" 
+            id="tabBtnDatos" 
+            onclick="switchProfileTab('datos')"
+            class="profile-tab-btn px-4 py-2.5 rounded-t-xl bg-lasalle-ice text-lasalle-vibrant border-b-2 border-lasalle-vibrant font-display font-extrabold text-xs sm:text-sm transition-all"
+          >
+            Datos personales
+          </button>
+          <button 
+            type="button" 
+            id="tabBtnPreferencias" 
+            onclick="switchProfileTab('preferencias')"
+            class="profile-tab-btn px-4 py-2.5 rounded-t-xl text-slate-500 hover:text-slate-800 font-display font-bold text-xs sm:text-sm transition-all"
+          >
+            Preferencias de reserva
+          </button>
+          <button 
+            type="button" 
+            id="tabBtnHistorial" 
+            onclick="switchProfileTab('historial')"
+            class="profile-tab-btn px-4 py-2.5 rounded-t-xl text-slate-500 hover:text-slate-800 font-display font-bold text-xs sm:text-sm transition-all"
+          >
+            Historial en campus
+          </button>
+        </div>
+
+        <!-- PESTAÑA 1: DATOS PERSONALES (EDICIÓN EN VIVO SOBRE EL CARNET 3D) -->
+        <div id="panelDatos" class="p-6 sm:p-8 tab-panel-active">
+          <div class="mb-6">
+            <h3 class="font-display text-lg font-extrabold text-slate-900">Información académica y contacto</h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Cualquier cambio se actualiza automáticamente en tu credencial institucional.
+            </p>
+          </div>
+
+          <form onsubmit="saveProfileChanges(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="inputName" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Nombre completo</label>
+                <input 
+                  type="text" 
+                  id="inputName" 
+                  value="Elías" 
+                  oninput="syncCardPreview()"
+                  required
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+                />
+              </div>
+
+              <div>
+                <label for="inputCode" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Código universitario</label>
+                <input 
+                  type="text" 
+                  id="inputCode" 
+                  value="2023-104892" 
+                  oninput="syncCardPreview()"
+                  required
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="inputCareer" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Escuela Profesional / Área</label>
+                <select 
+                  id="inputCareer" 
+                  onchange="syncCardPreview()"
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+                >
+                  <option value="Ingeniería de Software" selected>Ingeniería de Software</option>
+                  <option value="Administración y Negocios Internacionales">Administración y Negocios Internacionales</option>
+                  <option value="Derecho">Derecho</option>
+                  <option value="Psicología">Psicología</option>
+                  <option value="Contabilidad y Finanzas">Contabilidad y Finanzas</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="inputRole" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Perfil en eventos</label>
+                <select 
+                  id="inputRole" 
+                  onchange="syncCardPreview()"
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+                >
+                  <option value="Organizador de Eventos Estudiantiles" selected>Organizador de Eventos Estudiantiles</option>
+                  <option value="Delegado de Promoción">Delegado de Promoción</option>
+                  <option value="Representante de Círculo de Estudios">Representante de Círculo de Estudios</option>
+                  <option value="Coordinador de Feria / Emprendimiento">Coordinador de Feria / Emprendimiento</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="inputEmail" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Correo institucional</label>
+                <input 
+                  type="email" 
+                  id="inputEmail" 
+                  value="elias@ulasalle.edu.pe" 
+                  readonly
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-sm font-medium text-slate-500 cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <label for="inputPhone" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Teléfono de contacto</label>
+                <input 
+                  type="tel" 
+                  id="inputPhone" 
+                  value="+51 958 412 890" 
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+                />
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+              <button 
+                type="submit" 
+                class="px-6 py-3 rounded-xl bg-lasalle-gradient hover:opacity-95 text-white font-display font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-blue-600/20 transition-all"
+              >
+                Guardar cambios
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PESTAÑA 2: PREFERENCIAS DE RESERVA -->
+        <div id="panelPreferencias" class="hidden p-6 sm:p-8 space-y-5">
+          <div>
+            <h3 class="font-display text-lg font-extrabold text-slate-900">Configuración predeterminada de espacios</h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Personaliza cómo se cargan los recintos de LaSalle Arequipa cuando inicias una reserva.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <!-- Opción 1 -->
+            <div class="p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-extrabold text-slate-900">Vista superior 3D al ingresar</p>
+                <p class="text-xs text-slate-500">Iniciar el simulador de auditorios y área verde en vista aérea cenital.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                <input type="checkbox" checked onchange="showToast('Preferencia de vista 3D actualizada')" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lasalle-vibrant"></div>
+              </label>
+            </div>
+
+            <!-- Opción 2 -->
+            <div class="p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-extrabold text-slate-900">Recordatorios por correo institucional</p>
+                <p class="text-xs text-slate-500">Recibir confirmación y alerta 24 horas antes del evento en el campus.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                <input type="checkbox" checked onchange="showToast('Notificaciones actualizadas')" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lasalle-vibrant"></div>
+              </label>
+            </div>
+
+            <!-- Opción 3: Recinto favorito -->
+            <div class="p-4 rounded-2xl border border-blue-100 bg-lasalle-ice/40">
+              <label for="favSpaceSelect" class="block text-xs font-extrabold uppercase tracking-wider text-lasalle-blueDark mb-2">
+                Recinto habitual de reserva
+              </label>
+              <select 
+                id="favSpaceSelect" 
+                onchange="showToast('Recinto habitual guardado: ' + this.value)"
+                class="w-full px-4 py-2.5 rounded-xl border border-blue-200 bg-white text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+              >
+                <option>Auditorio Hermano Ludolfo Ojeda y Ojeda (70 personas)</option>
+                <option>Auditorio Hermano Benito Campos del Río (100 personas)</option>
+                <option>Área Verde de la Universidad (Stands / Conciertos)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 3: HISTORIAL EN CAMPUS -->
+        <div id="panelHistorial" class="hidden p-6 sm:p-8 space-y-4">
+          <div>
+            <h3 class="font-display text-lg font-extrabold text-slate-900">Historial reciente de espacios</h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Registro de tus reservas anteriores en la sede Arequipa.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div class="p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-lasalle-vibrant">14 de Octubre, 2026</span>
+                <p class="font-display text-sm font-extrabold text-slate-900">Auditorio Hermano Benito Campos del Río</p>
+                <p class="text-xs text-slate-500">Hackatón Estudiantil • 100 asistentes</p>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold self-start sm:self-center">
+                Finalizada
+              </span>
+            </div>
+
+            <div class="p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-lasalle-vibrant">22 de Septiembre, 2026</span>
+                <p class="font-display text-sm font-extrabold text-slate-900">Área Verde de la Universidad</p>
+                <p class="text-xs text-slate-500">Feria de Innovación • 20 stands en U</p>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold self-start sm:self-center">
+                Finalizada
+              </span>
+            </div>
+
+            <div class="p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-lasalle-vibrant">18 de Agosto, 2026</span>
+                <p class="font-display text-sm font-extrabold text-slate-900">Auditorio Hermano Ludolfo Ojeda y Ojeda</p>
+                <p class="text-xs text-slate-500">Charla de Bienvenida • 70 asistentes</p>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold self-start sm:self-center">
+                Finalizada
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Notificación Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-lasalle-gradient text-white px-5 py-3.5 rounded-xl shadow-xl border border-white/25 flex items-center gap-3 text-sm font-medium">
+      <span class="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
+      <span id="toastMessage">Cambios guardados</span>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       JAVASCRIPT INTERACTIVO: TILT 3D, EDICIÓN EN VIVO Y PESTAÑAS
+       ========================================================= -->
+  <script>
+    // 1. Dropdown del menú superior
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdown = document.getElementById('userDropdown');
+    const userChevron = document.getElementById('userChevron');
+
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = userDropdown.classList.contains('hidden');
+      userDropdown.classList.toggle('hidden');
+      userChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    });
+
+    document.addEventListener('click', () => {
+      userDropdown.classList.add('hidden');
+      userChevron.style.transform = 'rotate(0deg)';
+    });
+
+    // 2. Efecto 3D Tilt interactivo en la Credencial Digital
+    const idCard = document.getElementById('digitalIdCard');
+    const cardGlare = document.getElementById('cardGlare');
+
+    idCard.addEventListener('mousemove', (e) => {
+      const rect = idCard.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -8;
+      const rotateY = ((x - centerX) / centerX) * 10;
+
+      idCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      cardGlare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.28), transparent 65%)`;
+    });
+
+    idCard.addEventListener('mouseleave', () => {
+      idCard.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+
+    // 3. Sincronización en tiempo real del formulario con el Carnet 3D y Navbar
+    function syncCardPreview() {
+      const nameVal = document.getElementById('inputName').value.trim() || 'Elías';
+      const codeVal = document.getElementById('inputCode').value.trim() || '2023-104892';
+      const careerVal = document.getElementById('inputCareer').value;
+      const roleVal = document.getElementById('inputRole').value;
+
+      document.getElementById('cardFullName').textContent = nameVal;
+      document.getElementById('navUserName').textContent = nameVal.split(' ')[0];
+      document.getElementById('dropUserName').textContent = nameVal;
+      document.getElementById('cardStudentId').textContent = codeVal;
+      document.getElementById('cardCareer').textContent = careerVal;
+      document.getElementById('cardRole').textContent = roleVal;
+
+      const parts = nameVal.split(' ').filter(Boolean);
+      const initials = parts.length > 1
+        ? (parts[0][0] + parts[1][0]).toUpperCase()
+        : nameVal.slice(0, 2).toUpperCase();
+      document.getElementById('cardInitials').textContent = initials;
+    }
+
+    function saveProfileChanges(e) {
+      e.preventDefault();
+      syncCardPreview();
+      showToast('Datos de perfil actualizados en LaSalle Arequipa');
+    }
+
+    // 4. Cambio dinámico de pestañas del perfil
+    function switchProfileTab(tabName) {
+      const tabs = ['datos', 'preferencias', 'historial'];
+      tabs.forEach((t) => {
+        const cap = t.charAt(0).toUpperCase() + t.slice(1);
+        const btn = document.getElementById('tabBtn' + cap);
+        const panel = document.getElementById('panel' + cap);
+
+        if (t === tabName) {
+          btn.className = 'profile-tab-btn px-4 py-2.5 rounded-t-xl bg-lasalle-ice text-lasalle-vibrant border-b-2 border-lasalle-vibrant font-display font-extrabold text-xs sm:text-sm transition-all';
+          panel.classList.remove('hidden');
+          panel.classList.add('tab-panel-active');
+        } else {
+          btn.className = 'profile-tab-btn px-4 py-2.5 rounded-t-xl text-slate-500 hover:text-slate-800 font-display font-bold text-xs sm:text-sm transition-all';
+          panel.classList.add('hidden');
+          panel.classList.remove('tab-panel-active');
+        }
+      });
+    }
+
+    // 5. Notificación Toast
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3200);
+    }
+  </script>
+</body>
+</html>

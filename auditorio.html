@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auditorio Hno. Ludolfo Ojeda y Ojeda | LaSalle Arequipa</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Three.js & OrbitControls (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lasalle: {
+              blue: '#0038E0',
+              vibrant: '#0044FF',
+              blueDark: '#0022A8',
+              blueDeep: '#00187A',
+              ice: '#EBF2FF',
+              sky: '#D6E4FF',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Degradado azul vibrante institucional LaSalle Arequipa */
+    .bg-lasalle-gradient {
+      background: linear-gradient(135deg, #0044FF 0%, #0026B8 100%);
+    }
+
+    /* Personalización sutil de scrollbar para el panel derecho */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #0044FF;
+    }
+
+    #canvas-container canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      outline: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-lasalle-vibrant selection:text-white">
+
+  <!-- =========================================================
+       1. BARRA SUPERIOR INSTITUCIONAL (IDÉNTICA)
+       ========================================================= -->
+  <header class="bg-lasalle-gradient text-white shadow-lg shadow-blue-900/20 sticky top-0 z-40 border-b border-white/20">
+    <nav aria-label="Navegación principal" class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Parte Izquierda: Icono de Usuario con 'Portal Académico / Elías' -->
+      <div class="relative" id="userMenuContainer">
+        <button 
+          id="userMenuBtn"
+          type="button"
+          onclick="window.location.href='user.html'"
+          aria-label="Perfil de usuario"
+          class="group flex items-center gap-3 p-2 pr-3.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          <div class="w-10 h-10 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="hidden sm:flex flex-col text-left">
+            <span class="text-xs text-blue-100 font-medium leading-none">Portal Académico</span>
+            <span class="text-sm font-semibold text-white leading-tight mt-0.5 flex items-center gap-1">
+              Elías
+              <svg class="w-3.5 h-3.5 text-white transition-transform duration-200" id="userChevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
+        </button>
+
+        <!-- Dropdown de Perfil de Usuario -->
+        <div 
+          id="userDropdown" 
+          class="hidden absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-xl shadow-blue-950/15 border border-blue-100 py-2 text-slate-700 z-50 transform origin-top-left transition-all"
+        >
+          <div class="px-4 py-3 border-b border-blue-50">
+            <p class="text-xs font-bold uppercase tracking-wider text-lasalle-vibrant">Comunidad Lasallista</p>
+            <p class="text-sm font-semibold text-slate-900 mt-0.5">Elías</p>
+            <p class="text-xs text-slate-500">elias@ulasalle.edu.pe</p>
+          </div>
+          <div class="py-1">
+            <button type="button" onclick="showToast('Perfil de Elías • LaSalle Arequipa')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+              <svg class="w-4 h-4 text-lasalle-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Mi Perfil
+            </button>
+            <button type="button" onclick="showToast('Consultando historial de reservas de Elías')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+              <svg class="w-4 h-4 text-lasalle-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Mis Reservas
+            </button>
+            <button type="button" onclick="showToast('Sesión cerrada correctamente')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-lasalle-ice flex items-center gap-2.5 text-slate-700 hover:text-lasalle-blue transition-colors">
+              <svg class="w-4 h-4 text-lasalle-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parte Derecha: Identidad Oficial LaSalle Universidad Arequipa -->
+      <a href="#" class="flex items-center gap-3.5 group focus:outline-none" aria-label="LaSalle Universidad Arequipa">
+        <div class="text-right flex flex-col justify-center">
+          <span class="font-sans text-2xl sm:text-[1.65rem] font-extrabold tracking-tight text-white leading-none">
+            LaSalle
+          </span>
+          <span class="font-sans text-[11px] sm:text-xs font-medium tracking-wide text-blue-100 leading-tight mt-0.5">
+            Universidad <span class="text-white font-semibold">&bull; Arequipa</span>
+          </span>
+        </div>
+
+        <!-- Logotipo Vectorial: Estrella geométrica blanca con monograma 'LS' -->
+        <div class="w-12 h-12 sm:w-13 sm:h-13 rounded-xl bg-white/15 border border-white/30 flex items-center justify-center p-1.5 shadow-sm group-hover:bg-white/25 group-hover:scale-105 transition-all duration-300">
+          <svg viewBox="0 0 120 115" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrella LaSalle Arequipa">
+            <polygon points="58,6 45,42 54,42 58,28" fill="#FFFFFF" />
+            <polygon points="62,14 69,34 61,34 58,24" fill="#FFFFFF" />
+            <polygon points="8,43 44,43 38,54 24,54" fill="#FFFFFF" />
+            <polygon points="27,57 41,57 35,66" fill="#FFFFFF" />
+            <polygon points="46,45 55,45 48,79 68,72 65,83 33,96 42,63" fill="#FFFFFF" />
+            <polygon points="31,101 64,87 62,93 28,108" fill="#FFFFFF" />
+            <polygon points="64,37 112,37 104,47 62,47" fill="#FFFFFF" />
+            <polygon points="61,50 96,50 91,59 68,59 73,67 93,67 84,96 68,83 72,74 81,81 84,74 63,74 56,60" fill="#FFFFFF" />
+            <polygon points="99,51 108,51 96,65 92,61" fill="#FFFFFF" />
+          </svg>
+        </div>
+      </a>
+
+    </nav>
+  </header>
+
+  <!-- =========================================================
+       2. LAYOUT PRINCIPAL EN DOS COLUMNAS (62% VISOR 3D / 38% PANEL)
+       ========================================================= -->
+  <main class="flex-grow max-w-[1600px] w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col lg:flex-row gap-5">
+    
+    <!-- COLUMNA IZQUIERDA (62% ancho en desktop): VISOR 3D INTERACTIVO -->
+    <section aria-label="Simulación 3D Auditorio Hno. Ludolfo Ojeda y Ojeda" class="w-full lg:w-[62%] flex flex-col bg-white rounded-2xl shadow-md border border-blue-100 overflow-hidden relative min-h-[480px] lg:h-[calc(100vh-7.5rem)]">
+      
+      <!-- Barra flotante superior dentro del visor 3D -->
+      <div class="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        <div class="bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl shadow-md border border-blue-100 pointer-events-auto">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-lasalle-vibrant animate-pulse"></span>
+            <span class="text-xs font-display font-bold text-lasalle-blueDark uppercase tracking-wide">Modelo 3D Interactivo • Anfiteatro</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-0.5">Arrastra para rotar &bull; Rueda para zoom &bull; Clic en butacas para seleccionar</p>
+        </div>
+
+        <!-- Botones de Cámara Predefinida -->
+        <div class="flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1.5 rounded-xl shadow-md border border-blue-100 pointer-events-auto">
+          <button type="button" onclick="setCameraView('top')" class="cam-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-lasalle-vibrant text-white transition-all" data-view="top">
+            Vista Superior
+          </button>
+          <button type="button" onclick="setCameraView('stage')" class="cam-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-lasalle-ice hover:text-lasalle-blue transition-all" data-view="stage">
+            Vista Escenario
+          </button>
+          <button type="button" onclick="setCameraView('side')" class="cam-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-lasalle-ice hover:text-lasalle-blue transition-all" data-view="side">
+            Vista Lateral
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenedor Canvas Three.js -->
+      <div id="canvas-container" class="w-full h-full flex-grow bg-slate-900 cursor-grab active:cursor-grabbing relative"></div>
+
+      <!-- Leyenda flotante inferior en el Visor 3D -->
+      <div class="absolute bottom-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        <div class="bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-md border border-blue-100 flex flex-wrap items-center gap-3 text-xs pointer-events-auto">
+          <span class="font-bold text-slate-700">Zonas:</span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm bg-amber-400 border border-amber-600 inline-block"></span>
+            <span class="font-medium text-slate-700">VIP</span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm bg-sky-400 border border-sky-600 inline-block"></span>
+            <span class="font-medium text-slate-700">Platinum</span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm bg-[#8B1E24] border border-red-950 inline-block"></span>
+            <span class="font-medium text-slate-700">General (Guinda)</span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm bg-emerald-500 border border-emerald-700 inline-block"></span>
+            <span class="font-medium text-slate-700">Seleccionada</span>
+          </span>
+        </div>
+
+        <div id="seatHoverTooltip" class="hidden bg-lasalle-blueDeep/95 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-lg">
+          Butaca #1
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMNA DERECHA (38% ancho en desktop): PANEL DE CONTROL Y RESERVA -->
+    <aside aria-label="Panel de reserva del auditorio" class="w-full lg:w-[38%] bg-white rounded-2xl shadow-md border border-blue-100 flex flex-col lg:h-[calc(100vh-7.5rem)] overflow-hidden">
+      
+      <!-- Cabecera fija del panel -->
+      <div class="p-5 sm:p-6 border-b border-blue-100 bg-gradient-to-r from-lasalle-ice/70 to-white">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <span class="px-2.5 py-0.5 rounded-full bg-lasalle-vibrant/10 text-lasalle-vibrant text-[11px] font-bold uppercase tracking-wider">
+            Recinto Principal • Anfiteatro
+          </span>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+            Disponible
+          </span>
+        </div>
+        <h1 class="font-display text-xl sm:text-2xl font-extrabold text-lasalle-blueDark leading-tight">
+          Auditorio Hno. Ludolfo Ojeda y Ojeda
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-1 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-lasalle-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Aforo máximo: <strong class="text-lasalle-blueDark">70 personas</strong> (7 filas &times; 10 butacas)
+        </p>
+      </div>
+
+      <!-- Contenido desplazable del panel -->
+      <div class="p-5 sm:p-6 space-y-5 overflow-y-auto custom-scroll flex-grow">
+
+        <!-- SECCIÓN 1 Y 2: FECHAS DISPONIBLES DEL MES + SELECTOR DE MES DEL SEMESTRE -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-3.5">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-lasalle-blueDark">
+                Fechas disponibles del mes actual
+              </label>
+              <span id="selectedDateBadge" class="text-[11px] font-semibold text-lasalle-vibrant bg-lasalle-ice px-2 py-0.5 rounded-md">
+                Selecciona fecha
+              </span>
+            </div>
+            <!-- Pequeños boxes clicables de fechas -->
+            <div id="availableDatesContainer" class="grid grid-cols-5 gap-2">
+              <!-- Generado dinámicamente por JS -->
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-200">
+            <label for="semesterMonthSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              Mes del semestre actual
+            </label>
+            <select 
+              id="semesterMonthSelect" 
+              onchange="updateMonthDates()"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-blue-200 bg-white text-sm font-semibold text-lasalle-blueDark focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+            >
+              <option value="Agosto">Agosto 2026 (Inicio Semestre II)</option>
+              <option value="Septiembre">Septiembre 2026</option>
+              <option value="Octubre">Octubre 2026</option>
+              <option value="Noviembre" selected>Noviembre 2026 (Mes Actual)</option>
+              <option value="Diciembre">Diciembre 2026 (Cierre Semestre II)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 3: EVENTOS ESPECIALES (VACACIONES - FUERA DE SEMESTRE) -->
+        <div class="bg-lasalle-ice/50 rounded-xl p-4 border border-lasalle-sky space-y-3">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-lasalle-vibrant block">
+                Eventos Especiales (Vacaciones - Fuera de semestre)
+              </span>
+              <h2 class="text-sm font-display font-bold text-lasalle-blueDark mt-0.5">
+                Requerir disponibilidad
+              </h2>
+            </div>
+            <svg class="w-5 h-5 text-lasalle-vibrant flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label for="specialDateInput" class="block text-[11px] font-semibold text-slate-600 mb-1">Fecha a requerir</label>
+              <input 
+                type="date" 
+                id="specialDateInput" 
+                value="2027-01-15"
+                class="w-full px-3 py-2 rounded-lg border border-blue-200 bg-white text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+              />
+            </div>
+            <div>
+              <label for="specialReasonInput" class="block text-[11px] font-semibold text-slate-600 mb-1">Motivo (pocas palabras)</label>
+              <input 
+                type="text" 
+                id="specialReasonInput" 
+                maxlength="45"
+                placeholder="Ej. Congreso de verano"
+                class="w-full px-3 py-2 rounded-lg border border-blue-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-lasalle-vibrant"
+              />
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            onclick="submitSpecialRequest()"
+            class="w-full py-2 px-4 rounded-xl bg-white hover:bg-lasalle-vibrant text-lasalle-vibrant hover:text-white border border-lasalle-vibrant font-bold text-xs tracking-wide transition-all duration-200 shadow-sm"
+          >
+            Requerir
+          </button>
+        </div>
+
+        <!-- SECCIÓN 4: MENÚ DESPLEGABLE / ACORDEÓN ¿RESERVA ENUMERADA O POR ZONAS? -->
+        <div class="border border-blue-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <button 
+            type="button" 
+            id="zonesAccordionBtn"
+            onclick="toggleZonesAccordion()"
+            aria-expanded="false"
+            class="w-full px-4 py-3.5 bg-white hover:bg-lasalle-ice/60 flex items-center justify-between text-left transition-colors"
+          >
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-lasalle-vibrant/10 text-lasalle-vibrant flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+              </span>
+              <span class="text-sm font-display font-bold text-lasalle-blueDark">
+                ¿Reserva enumerada o por zonas?
+              </span>
+            </div>
+            <svg id="zonesChevron" class="w-4 h-4 text-lasalle-vibrant transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- Contenido desplegable de zonas y enumeración -->
+          <div id="zonesAccordionContent" class="hidden px-4 pb-4 pt-2 border-t border-blue-100 bg-slate-50/70 space-y-3.5">
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Define cuántas filas o asientos delanteros serán <strong>VIP</strong> y <strong>Platinum</strong>. Las 70 butacas se enumeran automáticamente del <strong class="text-lasalle-blueDark">#1 al #70</strong> en el modelo 3D.
+            </p>
+
+            <!-- Control VIP -->
+            <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-amber-200">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-amber-400 border border-amber-600"></span>
+                <div>
+                  <span class="text-xs font-bold text-slate-800 block">Zona VIP (Adelante)</span>
+                  <span id="vipRangeLabel" class="text-[10px] text-slate-500">Sin asignar</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="adjustZone('vip', -10)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-amber-100 text-slate-700 font-bold text-sm flex items-center justify-center">-</button>
+                <span id="vipCountDisplay" class="w-8 text-center text-xs font-extrabold text-amber-700">0</span>
+                <button type="button" onclick="adjustZone('vip', 10)" class="w-7 h-7 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold text-sm flex items-center justify-center">+</button>
+              </div>
+            </div>
+
+            <!-- Control Platinum -->
+            <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-sky-200">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-sky-400 border border-sky-600"></span>
+                <div>
+                  <span class="text-xs font-bold text-slate-800 block">Zona Platinum (Intermedio)</span>
+                  <span id="platinumRangeLabel" class="text-[10px] text-slate-500">Sin asignar</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="adjustZone('platinum', -10)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-sky-100 text-slate-700 font-bold text-sm flex items-center justify-center">-</button>
+                <span id="platinumCountDisplay" class="w-8 text-center text-xs font-extrabold text-sky-700">0</span>
+                <button type="button" onclick="adjustZone('platinum', 10)" class="w-7 h-7 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold text-sm flex items-center justify-center">+</button>
+              </div>
+            </div>
+
+            <!-- Resumen General (Automático) -->
+            <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-red-200">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#8B1E24] border border-red-950"></span>
+                <div>
+                  <span class="text-xs font-bold text-slate-800 block">Zona General (Restante)</span>
+                  <span id="generalRangeLabel" class="text-[10px] text-slate-500">Butacas #1 al #70</span>
+                </div>
+              </div>
+              <span id="generalCountDisplay" class="px-2.5 py-1 rounded-lg bg-red-50 text-[#8B1E24] text-xs font-extrabold">70</span>
+            </div>
+
+            <!-- Botones rápidos de configuración -->
+            <div class="flex items-center gap-2 pt-1">
+              <button type="button" onclick="applyPresetZones(10, 20)" class="flex-1 py-1.5 px-2 rounded-lg bg-lasalle-ice hover:bg-lasalle-sky text-lasalle-blue text-[11px] font-bold transition-colors">
+                Preset: 10 VIP / 20 Plat.
+              </button>
+              <button type="button" onclick="applyPresetZones(0, 0)" class="py-1.5 px-2.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-[11px] font-semibold transition-colors">
+                Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECCIÓN 5: BOX FINAL DE CONFIRMACIÓN Y BOTÓN RESERVAR -->
+      <div class="p-5 bg-white border-t border-blue-100 shadow-[0_-4px_15px_rgba(0,38,184,0.05)]">
+        <div class="flex items-center justify-between mb-3 px-1">
+          <div>
+            <span class="text-xs text-slate-500 block">Estado del recinto</span>
+            <span id="availableCapacityText" class="text-sm font-display font-extrabold text-lasalle-blueDark">
+              Aforo disponible: 70 personas
+            </span>
+          </div>
+          <div class="text-right">
+            <span class="text-[11px] text-slate-500 block">Solicitante</span>
+            <span class="text-xs font-bold text-lasalle-vibrant">Elías</span>
+          </div>
+        </div>
+
+        <button 
+          type="button" 
+          onclick="window.location.href='reserva.html'"
+          class="w-full py-3.5 px-6 rounded-xl bg-lasalle-gradient hover:opacity-95 text-white font-display font-bold text-sm tracking-wide shadow-lg shadow-blue-600/30 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
+        >
+          <span>Reservar</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </button>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- =========================================================
+       NOTIFICACIÓN FLOTANTE (TOAST AZUL Y BLANCO)
+       ========================================================= -->
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-lasalle-gradient text-white px-5 py-3.5 rounded-xl shadow-2xl border border-white/30 flex items-center gap-3 max-w-md">
+      <div class="w-7 h-7 rounded-full bg-white text-lasalle-vibrant flex items-center justify-center flex-shrink-0">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <p id="toastMessage" class="text-xs sm:text-sm font-medium leading-snug">Acción completada</p>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       LÓGICA JAVASCRIPT + SIMULACIÓN 3D THREE.JS
+       ========================================================= -->
+  <script>
+    /* ---------------------------------------------------------
+       A. MENÚ DESPLEGABLE DE USUARIO
+       --------------------------------------------------------- */
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdown = document.getElementById('userDropdown');
+    const userChevron = document.getElementById('userChevron');
+    const userMenuContainer = document.getElementById('userMenuContainer');
+
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = userDropdown.classList.contains('hidden');
+      userDropdown.classList.toggle('hidden');
+      userChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userMenuContainer.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+        userChevron.style.transform = 'rotate(0deg)';
+      }
+    });
+
+    /* ---------------------------------------------------------
+       B. FECHAS DISPONIBLES POR MES DEL SEMESTRE
+       --------------------------------------------------------- */
+    const semesterDatesMap = {
+      'Agosto': ['06 Ago', '13 Ago', '19 Ago', '25 Ago', '28 Ago'],
+      'Septiembre': ['03 Sep', '10 Sep', '16 Sep', '22 Sep', '29 Sep'],
+      'Octubre': ['02 Oct', '09 Oct', '15 Oct', '21 Oct', '28 Oct'],
+      'Noviembre': ['05 Nov', '12 Nov', '18 Nov', '24 Nov', '29 Nov'],
+      'Diciembre': ['03 Dic', '09 Dic', '14 Dic', '18 Dic', '22 Dic']
+    };
+
+    let selectedDateStr = '05 Nov';
+
+    function updateMonthDates() {
+      const month = document.getElementById('semesterMonthSelect').value;
+      const dates = semesterDatesMap[month] || semesterDatesMap['Noviembre'];
+      const container = document.getElementById('availableDatesContainer');
+      container.innerHTML = '';
+
+      dates.forEach((dateLabel, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isSelected = idx === 0;
+        if (isSelected) selectedDateStr = dateLabel;
+
+        btn.className = isSelected
+          ? 'date-box py-2 px-1 rounded-lg text-xs font-bold bg-lasalle-vibrant text-white shadow-sm border border-lasalle-vibrant transition-all text-center'
+          : 'date-box py-2 px-1 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-lasalle-ice hover:text-lasalle-blue border border-slate-200 transition-all text-center';
+        btn.textContent = dateLabel;
+
+        btn.onclick = () => {
+          selectedDateStr = dateLabel;
+          document.getElementById('selectedDateBadge').textContent = `Elegida: ${dateLabel}`;
+          document.querySelectorAll('.date-box').forEach(b => {
+            b.className = 'date-box py-2 px-1 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-lasalle-ice hover:text-lasalle-blue border border-slate-200 transition-all text-center';
+          });
+          btn.className = 'date-box py-2 px-1 rounded-lg text-xs font-bold bg-lasalle-vibrant text-white shadow-sm border border-lasalle-vibrant transition-all text-center';
+        };
+
+        container.appendChild(btn);
+      });
+
+      document.getElementById('selectedDateBadge').textContent = `Elegida: ${selectedDateStr}`;
+    }
+
+    /* ---------------------------------------------------------
+       C. SOLICITUD DE FECHA ESPECIAL (VACACIONES)
+       --------------------------------------------------------- */
+    function submitSpecialRequest() {
+      const dateVal = document.getElementById('specialDateInput').value;
+      const reasonVal = document.getElementById('specialReasonInput').value.trim();
+
+      if (!dateVal) {
+        showToast('Por favor selecciona una fecha en vacaciones.');
+        return;
+      }
+      if (!reasonVal) {
+        showToast('Ingresa un breve motivo para requerir disponibilidad.');
+        document.getElementById('specialReasonInput').focus();
+        return;
+      }
+
+      showToast(`Solicitud enviada por Elías para el ${dateVal} ("${reasonVal}").`);
+      document.getElementById('specialReasonInput').value = '';
+    }
+
+    /* ---------------------------------------------------------
+       D. ACORDEÓN DE ZONAS (VIP, PLATINUM, GENERAL) Y AFORO
+       --------------------------------------------------------- */
+    let vipCount = 0;
+    let platinumCount = 0;
+    const totalSeats = 70;
+    const selectedSeatNumbers = new Set();
+
+    function toggleZonesAccordion() {
+      const content = document.getElementById('zonesAccordionContent');
+      const chevron = document.getElementById('zonesChevron');
+      const btn = document.getElementById('zonesAccordionBtn');
+      const isHidden = content.classList.contains('hidden');
+
+      content.classList.toggle('hidden');
+      btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    function adjustZone(zone, delta) {
+      if (zone === 'vip') {
+        vipCount = Math.max(0, Math.min(totalSeats - platinumCount, vipCount + delta));
+      } else if (zone === 'platinum') {
+        platinumCount = Math.max(0, Math.min(totalSeats - vipCount, platinumCount + delta));
+      }
+      updateZonesUIAnd3D();
+    }
+
+    function applyPresetZones(vip, platinum) {
+      vipCount = vip;
+      platinumCount = platinum;
+      updateZonesUIAnd3D();
+      showToast(`Zonas actualizadas: ${vip} VIP, ${platinum} Platinum y ${totalSeats - vip - platinum} General.`);
+    }
+
+    function updateZonesUIAnd3D() {
+      const generalCount = totalSeats - vipCount - platinumCount;
+
+      document.getElementById('vipCountDisplay').textContent = vipCount;
+      document.getElementById('platinumCountDisplay').textContent = platinumCount;
+      document.getElementById('generalCountDisplay').textContent = generalCount;
+
+      document.getElementById('vipRangeLabel').textContent = vipCount > 0 ? `Butacas #1 al #${vipCount}` : 'Sin asignar';
+      document.getElementById('platinumRangeLabel').textContent = platinumCount > 0 ? `Butacas #${vipCount + 1} al #${vipCount + platinumCount}` : 'Sin asignar';
+      document.getElementById('generalRangeLabel').textContent = generalCount > 0 ? `Butacas #${vipCount + platinumCount + 1} al #70` : 'Sin asignar';
+
+      // Actualizar colores en el modelo 3D
+      if (typeof updateSeatColors3D === 'function') {
+        updateSeatColors3D();
+      }
+    }
+
+    function updateCapacityDisplay() {
+      const remaining = totalSeats - selectedSeatNumbers.size;
+      const textEl = document.getElementById('availableCapacityText');
+      if (selectedSeatNumbers.size > 0) {
+        textEl.textContent = `Aforo disponible: ${remaining} personas (${selectedSeatNumbers.size} sel.)`;
+      } else {
+        textEl.textContent = `Aforo disponible: 70 personas`;
+      }
+    }
+
+    function confirmAuditoriumBooking() {
+      const month = document.getElementById('semesterMonthSelect').value;
+      const seatsMsg = selectedSeatNumbers.size > 0
+        ? `Butacas seleccionadas: #${Array.from(selectedSeatNumbers).sort((a,b)=>a-b).join(', #')}`
+        : `Recinto completo (70 butacas • ${vipCount} VIP / ${platinumCount} Plat. / ${70 - vipCount - platinumCount} Gral.)`;
+
+      showToast(`¡Reserva confirmada para Elías! Auditorio Hno. Ludolfo Ojeda (${selectedDateStr} - ${month}). ${seatsMsg}`);
+    }
+
+    /* ---------------------------------------------------------
+       E. SIMULACIÓN 3D EN THREE.JS - AUDITORIO HNO. LUDOLFO OJEDA
+       --------------------------------------------------------- */
+    let scene, camera, renderer, controls, raycaster, mouse;
+    const seatMeshes = [];
+
+    // Materiales institucionales compartidos
+    const matVip = new THREE.MeshStandardMaterial({ color: 0xF59E0B, roughness: 0.45, metalness: 0.1 });
+    const matPlatinum = new THREE.MeshStandardMaterial({ color: 0x38BDF8, roughness: 0.45, metalness: 0.1 });
+    const matGeneral = new THREE.MeshStandardMaterial({ color: 0x8B1E24, roughness: 0.55, metalness: 0.05 }); // Rojo/Guinda oficial
+    const matSelected = new THREE.MeshStandardMaterial({ color: 0x10B981, roughness: 0.35, metalness: 0.15 });
+
+    function createNumberTexture(number, bgColor = '#1e293b') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = bgColor;
+      ctx.beginPath();
+      ctx.arc(64, 64, 56, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 54px Inter, Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(number), 64, 68);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      return tex;
+    }
+
+    function createScreenTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+
+      // Fondo blanco pantalla retráctil
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, 512, 256);
+
+      // Marco interior azul LaSalle
+      ctx.strokeStyle = '#0044FF';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(14, 14, 484, 228);
+
+      // Texto institucional
+      ctx.fillStyle = '#0022A8';
+      ctx.font = 'bold 34px Montserrat, Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('LaSalle Universidad', 256, 105);
+
+      ctx.fillStyle = '#0044FF';
+      ctx.font = '600 20px Inter, Arial, sans-serif';
+      ctx.fillText('Auditorio Hno. Ludolfo Ojeda y Ojeda', 256, 148);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '500 16px Inter, Arial, sans-serif';
+      ctx.fillText('Arequipa • Aforo: 70 Personas', 256, 182);
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function createFlagTexture(type) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128;
+      canvas.height = 192;
+      const ctx = canvas.getContext('2d');
+
+      if (type === 'peru') {
+        ctx.fillStyle = '#D91023';
+        ctx.fillRect(0, 0, 42, 192);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(42, 0, 44, 192);
+        ctx.fillStyle = '#D91023';
+        ctx.fillRect(86, 0, 42, 192);
+      } else if (type === 'arequipa') {
+        ctx.fillStyle = '#800020'; // Carmesí Arequipa
+        ctx.fillRect(0, 0, 128, 192);
+        ctx.strokeStyle = '#FACC15';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(12, 12, 104, 168);
+      } else {
+        // La Salle Azul y Blanco
+        ctx.fillStyle = '#0044FF';
+        ctx.fillRect(0, 0, 64, 192);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(64, 0, 64, 192);
+      }
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function init3DAuditorium() {
+      const container = document.getElementById('canvas-container');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0f172a);
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+      // Vista superior elevada por defecto (Top-down angled)
+      camera.position.set(0, 19.5, 13.5);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.maxPolarAngle = Math.PI / 2.08;
+      controls.minDistance = 7;
+      controls.maxDistance = 32;
+      controls.target.set(0, 1.2, -1);
+
+      // Iluminación LED blanca neutra empotrada
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.68);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xfffcf5, 0.75);
+      dirLight.position.set(6, 18, 8);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 1024;
+      dirLight.shadow.mapSize.height = 1024;
+      scene.add(dirLight);
+
+      // Luminarias LED cuadradas en el techo simuladas con PointLights
+      const ledPositions = [[-4, 7.5, -4], [4, 7.5, -4], [-4, 7.5, 3], [4, 7.5, 3]];
+      ledPositions.forEach(pos => {
+        const pLight = new THREE.PointLight(0xf8fafc, 0.35, 18);
+        pLight.position.set(...pos);
+        scene.add(pLight);
+      });
+
+      // Materiales arquitectónicos
+      const matWoodWarm = new THREE.MeshStandardMaterial({ color: 0x9C6635, roughness: 0.6 }); // Cedro / Roble
+      const matWoodDark = new THREE.MeshStandardMaterial({ color: 0x5C3A21, roughness: 0.65 });
+      const matWallCream = new THREE.MeshStandardMaterial({ color: 0xF5F2EB, roughness: 0.85 });
+      const matFloorDark = new THREE.MeshStandardMaterial({ color: 0x262930, roughness: 0.8 });
+      const matArmDark = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.4, metalness: 0.5 });
+
+      // 1. Piso base rectangular
+      const floorGeo = new THREE.BoxGeometry(15, 0.3, 19);
+      const floorMesh = new THREE.Mesh(floorGeo, matFloorDark);
+      floorMesh.position.set(0, -0.15, 0);
+      floorMesh.receiveShadow = true;
+      scene.add(floorMesh);
+
+      // 2. Paredes laterales con paneles acústicos de madera cálida + tramos crema/blanco
+      const wallHeight = 5.2;
+      // Pared fondo escenario (Z = -9.4)
+      const backStageWall = new THREE.Mesh(new THREE.BoxGeometry(15, wallHeight, 0.3), matWoodWarm);
+      backStageWall.position.set(0, wallHeight / 2, -9.4);
+      scene.add(backStageWall);
+
+      // Muros laterales (Izquierdo X = -7.4, Derecho X = +7.4) con alternancia madera / crema
+      [-7.4, 7.4].forEach(xPos => {
+        const baseWall = new THREE.Mesh(new THREE.BoxGeometry(0.3, wallHeight, 19), matWallCream);
+        baseWall.position.set(xPos, wallHeight / 2, 0);
+        scene.add(baseWall);
+
+        // Paneles acústicos de madera cálida en relieve
+        for (let z = -6.5; z <= 6.5; z += 3.2) {
+          const panel = new THREE.Mesh(new THREE.BoxGeometry(0.14, 3.8, 2.1), matWoodWarm);
+          panel.position.set(xPos > 0 ? xPos - 0.16 : xPos + 0.16, 2.3, z);
+          scene.add(panel);
+        }
+      });
+
+      // 3. Escenario en tarima elevada en el frente (Z = -6.8)
+      const stageGeo = new THREE.BoxGeometry(13.6, 0.55, 4.2);
+      const stageMesh = new THREE.Mesh(stageGeo, matWoodDark);
+      stageMesh.position.set(0, 0.275, -7.0);
+      stageMesh.receiveShadow = true;
+      stageMesh.castShadow = true;
+      scene.add(stageMesh);
+
+      // Mesa larga de madera para ponentes en el escenario
+      const tableTop = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.12, 1.0), matWoodWarm);
+      tableTop.position.set(-0.6, 1.35, -6.5);
+      tableTop.castShadow = true;
+      scene.add(tableTop);
+
+      const tableFront = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.72, 0.08), matWoodDark);
+      tableFront.position.set(-0.6, 0.95, -6.05);
+      scene.add(tableFront);
+
+      // Podio lateral derecho en el estrado
+      const podium = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.15, 0.65), matWoodWarm);
+      podium.position.set(3.4, 1.12, -6.1);
+      podium.castShadow = true;
+      scene.add(podium);
+
+      // Pantalla de proyección retráctil central de gran formato
+      const screenFrame = new THREE.Mesh(new THREE.BoxGeometry(6.4, 3.3, 0.15), matArmDark);
+      screenFrame.position.set(0, 3.1, -9.18);
+      scene.add(screenFrame);
+
+      const screenSurface = new THREE.Mesh(
+        new THREE.PlaneGeometry(6.1, 3.0),
+        new THREE.MeshBasicMaterial({ map: createScreenTexture() })
+      );
+      screenSurface.position.set(0, 3.1, -9.09);
+      scene.add(screenSurface);
+
+      // Parlantes negros suspendidos flanqueando la pantalla
+      [-4.1, 4.1].forEach(sx => {
+        const speaker = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.95, 0.5), matArmDark);
+        speaker.position.set(sx, 3.5, -8.8);
+        speaker.rotation.y = sx < 0 ? 0.25 : -0.25;
+        scene.add(speaker);
+      });
+
+      // Tres Banderas Institucionales (Perú, Arequipa y La Salle)
+      const flagTypes = [
+        { type: 'peru', x: -5.6 },
+        { type: 'arequipa', x: -4.8 },
+        { type: 'lasalle', x: 5.3 }
+      ];
+      flagTypes.forEach(f => {
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.1, 12), matArmDark);
+        pole.position.set(f.x, 2.1, -8.6);
+        scene.add(pole);
+
+        const cloth = new THREE.Mesh(
+          new THREE.BoxGeometry(0.55, 1.35, 0.06),
+          new THREE.MeshStandardMaterial({ map: createFlagTexture(f.type), roughness: 0.7 })
+        );
+        cloth.position.set(f.x + 0.25, 2.8, -8.55);
+        scene.add(cloth);
+      });
+
+      // 4. PLATEA ESCALONADA TIPO ANFITEATRO (7 FILAS × 10 BUTACAS = 70 BUTACAS EXACTAS)
+      // Dividida por pasillo central (5 butacas izquierda + pasillo + 5 butacas derecha)
+      const numRows = 7;
+      const seatsPerRow = 10;
+      let seatCounter = 1;
+
+      for (let r = 0; r < numRows; r++) {
+        const stepHeight = 0.22 + r * 0.24; // Pendiente ascendente hacia atrás
+        const rowZ = -3.4 + r * 1.55;
+
+        // Grada / Escalón de la fila
+        const riserGeo = new THREE.BoxGeometry(14.2, stepHeight, 1.52);
+        const riserMesh = new THREE.Mesh(riserGeo, r % 2 === 0 ? matFloorDark : matWoodDark);
+        riserMesh.position.set(0, stepHeight / 2, rowZ);
+        riserMesh.receiveShadow = true;
+        scene.add(riserMesh);
+
+        for (let c = 0; c < seatsPerRow; c++) {
+          // Pasillo central entre columna 4 y 5
+          const sideOffset = c < 5 ? -0.85 : 0.85;
+          const seatX = (c - 4.5) * 1.12 + sideOffset;
+
+          const seatGroup = new THREE.Group();
+          seatGroup.position.set(seatX, stepHeight, rowZ);
+
+          // Cojín asiento tapizado
+          const cushion = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.14, 0.72), matGeneral);
+          cushion.position.set(0, 0.42, 0.05);
+          cushion.castShadow = true;
+          seatGroup.add(cushion);
+
+          // Respaldo tapizado inclinado
+          const backrest = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.72, 0.14), matGeneral);
+          backrest.position.set(0, 0.78, 0.36);
+          backrest.rotation.x = -0.12;
+          backrest.castShadow = true;
+          seatGroup.add(backrest);
+
+          // Brazos oscuros integrados
+          [-0.41, 0.41].forEach(armX => {
+            const arm = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.32, 0.65), matArmDark);
+            arm.position.set(armX, 0.56, 0.08);
+            seatGroup.add(arm);
+          });
+
+          // Etiqueta numérica visible sobre la butaca (#1 al #70)
+          const badgeMat = new THREE.SpriteMaterial({
+            map: createNumberTexture(seatCounter),
+            depthTest: false
+          });
+          const sprite = new THREE.Sprite(badgeMat);
+          sprite.scale.set(0.46, 0.46, 1);
+          sprite.position.set(0, 1.32, 0.1);
+          seatGroup.add(sprite);
+
+          // Guardar metadatos en ambos meshes para Raycaster y cambio dinámico de zona
+          const seatData = {
+            number: seatCounter,
+            row: r + 1,
+            cushion,
+            backrest,
+            group: seatGroup
+          };
+          cushion.userData = seatData;
+          backrest.userData = seatData;
+          seatMeshes.push(seatData);
+
+          scene.add(seatGroup);
+          seatCounter++;
+        }
+      }
+
+      // Raycaster para selección interactiva con el mouse
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+
+      renderer.domElement.addEventListener('pointermove', onPointerMove);
+      renderer.domElement.addEventListener('click', onSeatClick);
+      window.addEventListener('resize', onWindowResize);
+
+      animate();
+    }
+
+    function updateSeatColors3D() {
+      seatMeshes.forEach(seat => {
+        let targetMat = matGeneral;
+        if (selectedSeatNumbers.has(seat.number)) {
+          targetMat = matSelected;
+        } else if (seat.number <= vipCount) {
+          targetMat = matVip;
+        } else if (seat.number <= vipCount + platinumCount) {
+          targetMat = matPlatinum;
+        }
+        seat.cushion.material = targetMat;
+        seat.backrest.material = targetMat;
+      });
+    }
+
+    function getIntersectedSeat(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const targets = seatMeshes.flatMap(s => [s.cushion, s.backrest]);
+      const intersects = raycaster.intersectObjects(targets, false);
+      return intersects.length > 0 ? intersects[0].object.userData : null;
+    }
+
+    function onPointerMove(event) {
+      const seat = getIntersectedSeat(event);
+      const tooltip = document.getElementById('seatHoverTooltip');
+      if (seat) {
+        renderer.domElement.style.cursor = 'pointer';
+        let zoneName = 'General';
+        if (seat.number <= vipCount) zoneName = 'VIP';
+        else if (seat.number <= vipCount + platinumCount) zoneName = 'Platinum';
+
+        tooltip.textContent = `Butaca #${seat.number} • Fila ${seat.row} (${zoneName})`;
+        tooltip.classList.remove('hidden');
+      } else {
+        renderer.domElement.style.cursor = 'grab';
+        tooltip.classList.add('hidden');
+      }
+    }
+
+    function onSeatClick(event) {
+      const seat = getIntersectedSeat(event);
+      if (!seat) return;
+
+      if (selectedSeatNumbers.has(seat.number)) {
+        selectedSeatNumbers.delete(seat.number);
+      } else {
+        selectedSeatNumbers.add(seat.number);
+      }
+      updateSeatColors3D();
+      updateCapacityDisplay();
+    }
+
+    function setCameraView(view) {
+      document.querySelectorAll('.cam-btn').forEach(btn => {
+        if (btn.dataset.view === view) {
+          btn.className = 'cam-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-lasalle-vibrant text-white transition-all';
+        } else {
+          btn.className = 'cam-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-lasalle-ice hover:text-lasalle-blue transition-all';
+        }
+      });
+
+      if (view === 'top') {
+        camera.position.set(0, 19.5, 13.5);
+        controls.target.set(0, 1.2, -1);
+      } else if (view === 'stage') {
+        camera.position.set(0, 4.8, 9.2);
+        controls.target.set(0, 2.2, -7.5);
+      } else if (view === 'side') {
+        camera.position.set(14.5, 8.5, 2.5);
+        controls.target.set(0, 1.5, -1.5);
+      }
+      controls.update();
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('canvas-container');
+      if (!container || !renderer || !camera) return;
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (controls) controls.update();
+      if (renderer && scene && camera) renderer.render(scene, camera);
+    }
+
+    /* ---------------------------------------------------------
+       F. NOTIFICACIÓN TOAST
+       --------------------------------------------------------- */
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      toastMsg.textContent = message;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 4200);
+    }
+
+    // Inicialización al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      updateMonthDates();
+      init3DAuditorium();
+    });
+  </script>
+</body>
+</html>
